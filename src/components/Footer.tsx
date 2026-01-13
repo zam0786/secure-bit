@@ -7,7 +7,7 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2">
             <Shield className="w-6 h-6 text-primary" />
-            <span className="font-display font-bold text-lg">CyberShield</span>
+            <span className="font-display font-bold text-lg">SecureBit</span>
           </div>
 
           <nav className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
@@ -18,7 +18,7 @@ const Footer = () => {
           </nav>
 
           <p className="text-sm text-muted-foreground">
-            © 2024 CyberShield. All rights reserved.
+            © 2024 SecureBit. Toronto, Canada. All rights reserved.
           </p>
         </div>
       </div>

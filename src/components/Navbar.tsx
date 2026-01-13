@@ -20,7 +20,7 @@ const Navbar = () => {
           <a href="#" className="flex items-center gap-2 group">
             <Shield className="w-8 h-8 text-primary transition-all duration-300 group-hover:drop-shadow-[0_0_10px_hsl(185_100%_50%/0.8)]" />
             <span className="font-display font-bold text-xl text-foreground">
-              CyberShield
+              SecureBit
             </span>
           </a>
 
