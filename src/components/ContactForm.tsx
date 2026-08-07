@@ -45,22 +45,30 @@ const ContactForm = () => {
       newErrors.name = "Name is required";
     } else if (formData.name.trim().length < 2) {
       newErrors.name = "Name must be at least 2 characters";
+    } else if (formData.name.trim().length > 100) {
+      newErrors.name = "Name must be less than 100 characters";
     }
 
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!validateEmail(formData.email)) {
       newErrors.email = "Please enter a valid email address";
+    } else if (formData.email.trim().length > 255) {
+      newErrors.email = "Email must be less than 255 characters";
     }
 
     if (!formData.company.trim()) {
       newErrors.company = "Company name is required";
+    } else if (formData.company.trim().length > 100) {
+      newErrors.company = "Company must be less than 100 characters";
     }
 
     if (!formData.message.trim()) {
       newErrors.message = "Message is required";
     } else if (formData.message.trim().length < 10) {
       newErrors.message = "Message must be at least 10 characters";
+    } else if (formData.message.trim().length > 1000) {
+      newErrors.message = "Message must be less than 1000 characters";
     }
 
     setErrors(newErrors);
@@ -145,6 +153,7 @@ const ContactForm = () => {
             id="name"
             name="name"
             placeholder="John Doe"
+            maxLength={100}
             value={formData.name}
             onChange={handleChange}
             className={`bg-background/50 border-border focus:border-primary ${
@@ -165,6 +174,7 @@ const ContactForm = () => {
             name="email"
             type="email"
             placeholder="john@company.com"
+            maxLength={255}
             value={formData.email}
             onChange={handleChange}
             className={`bg-background/50 border-border focus:border-primary ${
@@ -185,6 +195,7 @@ const ContactForm = () => {
           id="company"
           name="company"
           placeholder="Your Company Inc."
+          maxLength={100}
           value={formData.company}
           onChange={handleChange}
           className={`bg-background/50 border-border focus:border-primary ${
@@ -205,6 +216,7 @@ const ContactForm = () => {
           name="message"
           placeholder="Tell us about your security needs..."
           rows={5}
+          maxLength={1000}
           value={formData.message}
           onChange={handleChange}
           className={`bg-background/50 border-border focus:border-primary resize-none ${
