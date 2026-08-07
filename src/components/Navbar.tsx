@@ -7,9 +7,11 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
+    { name: "Home", href: "#" },
     { name: "Services", href: "#services" },
-    { name: "Why Us", href: "#why-us" },
-    { name: "Contact", href: "#contact" },
+    { name: "Testimonials", href: "#testimonials" },
+    { name: "About", href: "#about" },
+    { name: "Blog", href: "#blog" },
   ];
 
   return (
@@ -25,7 +27,7 @@ const Navbar = () => {
           </a>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => (
               <a
                 key={link.name}
