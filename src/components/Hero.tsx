@@ -55,12 +55,14 @@ const Hero = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <Button variant="cyber" size="xl">
-              Schedule Consultation
-              <ArrowRight className="w-5 h-5" />
+            <Button variant="cyber" size="xl" asChild>
+              <a href="#contact">
+                Schedule Consultation
+                <ArrowRight className="w-5 h-5" />
+              </a>
             </Button>
-            <Button variant="cyberOutline" size="xl">
-              View Services
+            <Button variant="cyberOutline" size="xl" asChild>
+              <a href="#services">View Services</a>
             </Button>
           </motion.div>
 
