@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 import { lovable } from "@/integrations/lovable/index";
 
 /** Only same-origin relative paths are accepted as a post-auth destination. */
@@ -66,11 +67,27 @@ const Auth = () => {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-background px-4 py-20">
+      <Helmet>
+        <title>Sign In | SecureBit Security Team Portal</title>
+        <meta
+          name="description"
+          content="Sign in to the SecureBit security team portal to review inbound enquiries and connect approved AI clients to your account."
+        />
+        <link rel="canonical" href="https://secure-bit.lovable.app/auth" />
+        <meta property="og:title" content="Sign In | SecureBit Security Team Portal" />
+        <meta
+          property="og:description"
+          content="Security team access for reviewing inbound enquiries and connecting AI clients."
+        />
+        <meta property="og:url" content="https://secure-bit.lovable.app/auth" />
+      </Helmet>
       <Card className="w-full max-w-md border-border bg-card">
         <CardHeader className="space-y-2">
           <Shield className="w-8 h-8 text-primary" />
-          <CardTitle className="font-display text-2xl">
+          <CardTitle asChild className="font-display text-2xl">
+            <h1>
             {mode === "signin" ? "Sign in to SecureBit" : "Create your SecureBit account"}
+            </h1>
           </CardTitle>
           <CardDescription>
             Security team access for reviewing inbound enquiries and connecting AI clients.
