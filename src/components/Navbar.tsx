@@ -38,14 +38,16 @@ const Navbar = () => {
                 {link.name}
               </a>
             ))}
-            <Button variant="cyber" size="sm">
-              Get Protected
+            <Button variant="cyber" size="sm" asChild>
+              <a href="#contact">Get Protected</a>
             </Button>
           </div>
 
           {/* Mobile Menu Button */}
           <button
             className="md:hidden text-foreground"
+            aria-label={isOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isOpen}
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -73,8 +75,10 @@ const Navbar = () => {
                   {link.name}
                 </a>
               ))}
-              <Button variant="cyber" className="w-full">
-                Get Protected
+              <Button variant="cyber" className="w-full" asChild>
+                <a href="#contact" onClick={() => setIsOpen(false)}>
+                  Get Protected
+                </a>
               </Button>
             </div>
           </motion.div>
