@@ -84,11 +84,9 @@ const Auth = () => {
       <Card className="w-full max-w-md border-border bg-card">
         <CardHeader className="space-y-2">
           <Shield className="w-8 h-8 text-primary" />
-          <CardTitle asChild className="font-display text-2xl">
-            <h1>
+          <h1 className="font-display text-2xl font-semibold leading-none tracking-tight">
             {mode === "signin" ? "Sign in to SecureBit" : "Create your SecureBit account"}
-            </h1>
-          </CardTitle>
+          </h1>
           <CardDescription>
             Security team access for reviewing inbound enquiries and connecting AI clients.
           </CardDescription>
