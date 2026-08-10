@@ -60,9 +60,9 @@ const Hero = () => {
             transition={{ duration: 0.6, delay: 0.25 }}
             className="text-lg md:text-xl text-foreground max-w-3xl mx-auto mb-10"
           >
-            At <strong>SecureBIT Inc.</strong>, we help businesses protect their systems, data,
-            and operations with practical, cost-effective cybersecurity solutions tailored to
-            their needs and budget.
+            At <strong>SecureBit</strong>, we help businesses protect their systems, data, and
+            operations with practical, cost-effective cybersecurity solutions tailored to their
+            needs and budget.
           </motion.p>
 
           <motion.div

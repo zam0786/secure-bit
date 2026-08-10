@@ -15,15 +15,15 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>SecureBIT Inc. | Cybersecurity Consulting & Risk Assessments</title>
+        <title>SecureBit | Cybersecurity Consulting & Risk Assessments</title>
         <meta
           name="description"
-          content="SecureBIT Inc. delivers cybersecurity consulting, risk assessments, virtual CISO support, cloud security, and incident response for businesses of every size."
+          content="SecureBit delivers cybersecurity consulting, risk assessments, virtual CISO support, cloud security, and incident response for businesses of every size."
         />
         <link rel="canonical" href="https://secure-bit.lovable.app/" />
         <meta
           property="og:title"
-          content="SecureBIT Inc. | Cybersecurity Consulting & Risk Assessments"
+          content="SecureBit | Cybersecurity Consulting & Risk Assessments"
         />
         <meta
           property="og:description"
