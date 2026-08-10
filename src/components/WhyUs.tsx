@@ -49,7 +49,7 @@ const WhyUs = () => {
             Why Choose Us
           </span>
           <h2 className="font-display text-3xl md:text-5xl font-bold mt-4 mb-6">
-            Why Choose SecureBIT?
+            Why Choose SecureBit?
           </h2>
         </motion.div>
 
