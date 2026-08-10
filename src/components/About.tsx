@@ -1,19 +1,61 @@
-import { Target, TrendingUp, ShieldCheck } from "lucide-react";
+import { ShieldCheck, Users, Cloud, Mail, Wifi, Router, Headset, Briefcase } from "lucide-react";
 import { motion } from "framer-motion";
 
-const helps = [
-  "Identify and resolve underlying cybersecurity issues",
-  "Protect intellectual property and sensitive data",
-  "Improve security awareness through training",
-  "Strengthen cybersecurity controls and processes",
-  "Prepare for compliance requirements",
-  "Reduce the risk and cost of security breaches",
+const services = [
+  { icon: Briefcase, label: "Virtual CIO services" },
+  { icon: Headset, label: "Fully managed IT support" },
+  { icon: Users, label: "24/7 technical assistance" },
+  { icon: Cloud, label: "Cloud services" },
+  { icon: Mail, label: "Hosted email" },
+  { icon: ShieldCheck, label: "Cybersecurity management" },
+  { icon: Wifi, label: "Wi-Fi event rentals" },
+  { icon: Router, label: "Point-to-point internet services" },
+];
+
+const reasons = [
+  "Decades of combined cybersecurity and IT experience",
+  "A proven record of helping businesses improve their security",
+  "Personalized service and attention to detail",
+  "Practical, cost-effective solutions",
+  "Ongoing monitoring and support",
+  "Technology recommendations aligned with your business objectives",
 ];
 
 const About = () => {
   return (
     <section id="about" className="py-24 relative">
       <div className="container mx-auto px-4">
+        <div className="max-w-4xl mx-auto text-center mb-16">
+          <motion.span
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-primary font-medium text-sm uppercase tracking-wider"
+          >
+            About Us
+          </motion.span>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="font-display text-3xl md:text-4xl font-bold mt-4 mb-6"
+          >
+            SecureBit
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-muted-foreground text-lg"
+          >
+            SecureBit is a professional, forward-thinking managed cybersecurity and IT services
+            provider serving businesses across the Greater Toronto and Hamilton Area since 2008.
+          </motion.p>
+        </div>
+
         <div className="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -21,32 +63,32 @@ const About = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <span className="text-primary font-medium text-sm uppercase tracking-wider">
-              About Us
-            </span>
-            <h2 className="font-display text-3xl md:text-4xl font-bold mt-4 mb-6">
-              Cybersecurity That Supports Your Business
-            </h2>
+            <h3 className="font-display text-2xl font-semibold mb-4">
+              Technology Solutions Built Around Your Business
+            </h3>
             <p className="text-muted-foreground text-lg mb-6">
-              Unresolved cybersecurity issues can disrupt productivity, increase costs, and hinder
-              growth. SecureBIT helps you maintain and improve your existing security controls
-              while monitoring emerging threats, risks, and vulnerabilities.
-            </p>
-            <p className="text-muted-foreground text-lg mb-8">
-              Our customized service packages are designed to meet your business requirements while
-              keeping costs predictable. Choose from monthly or annual plans that provide
-              consistent cybersecurity support and help prevent unexpected issues from disrupting
-              your operations.
+              We help organizations strengthen their technology, protect sensitive information,
+              and operate more efficiently through reliable, business-focused solutions.
             </p>
 
-            <div className="space-y-3">
-              {helps.map((item) => (
-                <div key={item} className="flex gap-3 items-start">
-                  <ShieldCheck className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                  <span className="text-foreground">{item}</span>
+            <div className="grid sm:grid-cols-2 gap-4 mb-8">
+              {services.map((service) => (
+                <div
+                  key={service.label}
+                  className="flex items-center gap-3 p-3 rounded-lg bg-card border border-border"
+                >
+                  <service.icon className="w-5 h-5 text-primary flex-shrink-0" />
+                  <span className="text-foreground text-sm">{service.label}</span>
                 </div>
               ))}
             </div>
+
+            <p className="text-muted-foreground text-lg">
+              Our clients represent a wide range of industries, including sports and entertainment,
+              wholesale, healthcare, professional services, and more. Regardless of your industry
+              or organization size, our team works closely with you to understand your goals and
+              deliver solutions that fit your needs.
+            </p>
           </motion.div>
 
           <motion.div
@@ -57,36 +99,30 @@ const About = () => {
             className="space-y-6"
           >
             <div className="p-6 rounded-xl bg-card border border-border">
-              <Target className="w-8 h-8 text-primary mb-4" />
-              <h3 className="font-display text-xl font-semibold mb-2">
-                Cybersecurity Aligned With Your Goals
+              <h3 className="font-display text-2xl font-semibold mb-4">
+                Why Choose SecureBIT?
               </h3>
-              <p className="text-muted-foreground text-sm">
-                Our team includes cybersecurity professionals with more than 20 years of combined
-                industry experience, along with business specialists who understand the
-                operational demands of different industries.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-xl bg-card border border-border">
-              <TrendingUp className="w-8 h-8 text-primary mb-4" />
-              <h3 className="font-display text-xl font-semibold mb-2">
-                Built for Long-Term Growth
-              </h3>
-              <p className="text-muted-foreground text-sm">
-                We work closely with your team to ensure your cybersecurity strategy supports your
-                business objectives, budget, and long-term growth.
-              </p>
+              <div className="space-y-3">
+                {reasons.map((reason) => (
+                  <div key={reason} className="flex gap-3 items-start">
+                    <ShieldCheck className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-foreground">{reason}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="p-6 rounded-xl bg-primary/5 border border-primary/20">
-              <p className="text-sm text-muted-foreground mb-2">Combined Experience</p>
-              <p className="text-foreground font-display font-semibold text-2xl">
-                20+ Years
+              <p className="text-muted-foreground mb-4">
+                Don’t wait until a cyber incident disrupts your operations. Contact SecureBit today
+                to schedule a consultation and take the next step toward protecting your business.
               </p>
-              <p className="text-muted-foreground text-sm mt-1">
-                Across cybersecurity and business technology.
-              </p>
+              <a
+                href="#contact"
+                className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
+              >
+                Schedule a Consultation
+              </a>
             </div>
           </motion.div>
         </div>
