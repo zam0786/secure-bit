@@ -5,6 +5,7 @@ import Services from "@/components/Services";
 import WhyUs from "@/components/WhyUs";
 import Testimonials from "@/components/Testimonials";
 import About from "@/components/About";
+import Process from "@/components/Process";
 import Blog from "@/components/Blog";
 import Contact from "@/components/Contact";
 import CTA from "@/components/CTA";
@@ -14,16 +15,19 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>SecureBit | Cybersecurity Consulting &amp; Pentesting Toronto</title>
+        <title>SecureBIT Inc. | Cybersecurity Consulting & Risk Assessments</title>
         <meta
           name="description"
-          content="SecureBit delivers penetration testing, security consulting, managed security and awareness training for Toronto businesses. Protect your business before the threat strikes."
+          content="SecureBIT Inc. delivers cybersecurity consulting, risk assessments, virtual CISO support, cloud security, and incident response for businesses of every size."
         />
         <link rel="canonical" href="https://secure-bit.lovable.app/" />
-        <meta property="og:title" content="SecureBit | Cybersecurity Consulting &amp; Pentesting Toronto" />
+        <meta
+          property="og:title"
+          content="SecureBIT Inc. | Cybersecurity Consulting & Risk Assessments"
+        />
         <meta
           property="og:description"
-          content="Penetration testing, security consulting, managed security and awareness training for Toronto businesses."
+          content="Practical, cost-effective cybersecurity solutions including risk assessments, vCISO support, cloud security, and incident response."
         />
         <meta property="og:url" content="https://secure-bit.lovable.app/" />
       </Helmet>
@@ -33,6 +37,7 @@ const Index = () => {
       <WhyUs />
       <Testimonials />
       <About />
+      <Process />
       <Blog />
       <Contact />
       <CTA />
