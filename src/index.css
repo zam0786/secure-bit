@@ -6,57 +6,57 @@
 
 @layer base {
   :root {
-    --background: 222 47% 6%;
-    --foreground: 210 40% 98%;
+    --background: 218 35% 8%;
+    --foreground: 210 30% 96%;
 
-    --card: 222 47% 8%;
-    --card-foreground: 210 40% 98%;
+    --card: 218 32% 11%;
+    --card-foreground: 210 30% 96%;
 
-    --popover: 222 47% 8%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 218 32% 11%;
+    --popover-foreground: 210 30% 96%;
 
-    --primary: 185 100% 50%;
-    --primary-foreground: 222 47% 6%;
+    --primary: 186 62% 45%;
+    --primary-foreground: 218 40% 7%;
 
-    --secondary: 222 47% 12%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 218 28% 15%;
+    --secondary-foreground: 210 30% 96%;
 
-    --muted: 222 30% 15%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 218 24% 16%;
+    --muted-foreground: 213 16% 70%;
 
-    --accent: 185 80% 40%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 199 60% 52%;
+    --accent-foreground: 218 40% 7%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 222 30% 18%;
-    --input: 222 30% 18%;
-    --ring: 185 100% 50%;
+    --border: 218 22% 20%;
+    --input: 218 22% 20%;
+    --ring: 186 62% 45%;
 
-    --radius: 0.5rem;
+    --radius: 0.625rem;
 
-    /* Custom cyber tokens */
-    --cyber-glow: 185 100% 50%;
-    --cyber-dark: 222 47% 4%;
-    --cyber-surface: 222 47% 10%;
-    --cyber-gradient: linear-gradient(135deg, hsl(185 100% 50% / 0.1), hsl(222 47% 8%));
-    --cyber-border-glow: 0 0 20px hsl(185 100% 50% / 0.3);
-    --hero-gradient: linear-gradient(180deg, hsl(222 47% 6%) 0%, hsl(222 47% 4%) 100%);
+    /* Brand surface tokens */
+    --cyber-glow: 186 62% 45%;
+    --cyber-dark: 218 38% 6%;
+    --cyber-surface: 218 30% 13%;
+    --cyber-gradient: linear-gradient(135deg, hsl(186 62% 45% / 0.08), hsl(218 32% 11%));
+    --cyber-border-glow: 0 1px 0 hsl(186 62% 45% / 0.18);
+    --hero-gradient: linear-gradient(180deg, hsl(218 35% 8%) 0%, hsl(218 38% 6%) 100%);
 
-    --sidebar-background: 222 47% 8%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 185 100% 50%;
-    --sidebar-primary-foreground: 222 47% 6%;
-    --sidebar-accent: 222 47% 12%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 222 30% 18%;
-    --sidebar-ring: 185 100% 50%;
+    --sidebar-background: 218 32% 11%;
+    --sidebar-foreground: 210 30% 96%;
+    --sidebar-primary: 186 62% 45%;
+    --sidebar-primary-foreground: 218 40% 7%;
+    --sidebar-accent: 218 28% 15%;
+    --sidebar-accent-foreground: 210 30% 96%;
+    --sidebar-border: 218 22% 20%;
+    --sidebar-ring: 186 62% 45%;
   }
 
   .dark {
-    --background: 222 47% 6%;
-    --foreground: 210 40% 98%;
+    --background: 218 35% 8%;
+    --foreground: 210 30% 96%;
   }
 }
 
@@ -73,6 +73,10 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Space Grotesk', sans-serif;
   }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
 }
 
 @layer utilities {
@@ -88,6 +92,14 @@
     background-image: 
       linear-gradient(hsl(var(--border) / 0.3) 1px, transparent 1px),
       linear-gradient(90deg, hsl(var(--border) / 0.3) 1px, transparent 1px);
-    background-size: 50px 50px;
+    background-size: 56px 56px;
+  }
+
+  .surface-card {
+    @apply rounded-xl border border-border bg-card p-6 transition-colors duration-300 hover:border-primary/40;
+  }
+
+  .eyebrow {
+    @apply text-primary font-medium text-xs uppercase tracking-[0.18em];
   }
 }
