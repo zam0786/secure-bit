@@ -23,6 +23,8 @@ export type Database = {
           message: string
           name: string
           notified_at: string | null
+          phone: string | null
+          topic: string | null
         }
         Insert: {
           company: string
@@ -32,6 +34,8 @@ export type Database = {
           message: string
           name: string
           notified_at?: string | null
+          phone?: string | null
+          topic?: string | null
         }
         Update: {
           company?: string
@@ -41,6 +45,8 @@ export type Database = {
           message?: string
           name?: string
           notified_at?: string | null
+          phone?: string | null
+          topic?: string | null
         }
         Relationships: []
       }
