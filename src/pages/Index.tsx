@@ -1,48 +1,30 @@
-import { Helmet } from "react-helmet-async";
-import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
-import Services from "@/components/Services";
-import WhyUs from "@/components/WhyUs";
-import Testimonials from "@/components/Testimonials";
-import About from "@/components/About";
-import Process from "@/components/Process";
-import Blog from "@/components/Blog";
-import Contact from "@/components/Contact";
-import CTA from "@/components/CTA";
-import Footer from "@/components/Footer";
+import Seo from "@/components/Seo";
+import Hero from "@/components/home/Hero";
+import Challenges from "@/components/home/Challenges";
+import ServicesOverview from "@/components/home/ServicesOverview";
+import RiskToResilience from "@/components/home/RiskToResilience";
+import WhySecureBitSection from "@/components/home/WhySecureBitSection";
+import WhoWeHelp from "@/components/home/WhoWeHelp";
+import EngagementModels from "@/components/home/EngagementModels";
+import FinalCTA from "@/components/home/FinalCTA";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <Helmet>
-        <title>SecureBit | Cybersecurity Consulting & Risk Assessments</title>
-        <meta
-          name="description"
-          content="SecureBit delivers cybersecurity consulting, risk assessments, virtual CISO support, cloud security, and incident response for businesses of every size."
-        />
-        <link rel="canonical" href="https://secure-bit.lovable.app/" />
-        <meta
-          property="og:title"
-          content="SecureBit | Cybersecurity Consulting & Risk Assessments"
-        />
-        <meta
-          property="og:description"
-          content="Practical, cost-effective cybersecurity solutions including risk assessments, vCISO support, cloud security, and incident response."
-        />
-        <meta property="og:url" content="https://secure-bit.lovable.app/" />
-      </Helmet>
-      <Navbar />
+    <>
+      <Seo
+        title="SecureBit | Cybersecurity Consulting & Risk Management"
+        description="SecureBit helps businesses identify and reduce cyber risk through practical cybersecurity consulting, vulnerability management, cloud security, compliance, incident readiness, and AI security."
+        path="/"
+      />
       <Hero />
-      <Services />
-      <WhyUs />
-      <Testimonials />
-      <About />
-      <Process />
-      <Blog />
-      <Contact />
-      <CTA />
-      <Footer />
-    </div>
+      <Challenges />
+      <ServicesOverview />
+      <RiskToResilience />
+      <WhySecureBitSection />
+      <WhoWeHelp />
+      <EngagementModels />
+      <FinalCTA />
+    </>
   );
 };
 
