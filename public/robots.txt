@@ -12,5 +12,8 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /auth
+Disallow: /auth/callback
+Disallow: /.lovable/
 
-Sitemap: https://secure-bit.lovable.app/sitemap.xml
+Sitemap: https://securebit.ca/sitemap.xml
