@@ -73,13 +73,14 @@ const Auth = () => {
           name="description"
           content="Sign in to the SecureBit security team portal to review inbound enquiries and connect approved AI clients to your account."
         />
-        <link rel="canonical" href="https://secure-bit.lovable.app/auth" />
+        <meta name="robots" content="noindex, nofollow" />
+        <link rel="canonical" href="https://securebit.ca/auth" />
         <meta property="og:title" content="Sign In | SecureBit Security Team Portal" />
         <meta
           property="og:description"
           content="Security team access for reviewing inbound enquiries and connecting AI clients."
         />
-        <meta property="og:url" content="https://secure-bit.lovable.app/auth" />
+        <meta property="og:url" content="https://securebit.ca/auth" />
       </Helmet>
       <Card className="w-full max-w-md border-border bg-card">
         <CardHeader className="space-y-2">
