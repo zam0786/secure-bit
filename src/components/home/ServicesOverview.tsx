@@ -5,7 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 import { services } from "@/data/services";
 
 const ServicesOverview = () => {
-  const homeServices = services.slice(0, 6);
+  const homeServices = services;
 
   return (
     <section id="services" className="py-24 border-b border-border bg-card/30">
@@ -16,9 +16,9 @@ const ServicesOverview = () => {
             Security Expertise Built Around Your Business
           </h2>
           <p className="text-muted-foreground text-lg">
-            From cybersecurity strategy and vulnerability management to cloud security, compliance,
-            incident readiness, and AI security, SecureBit provides practical solutions designed
-            around your needs.
+            From cybersecurity strategy and vulnerability management to endpoint and cloud security,
+            compliance, incident readiness, and AI security, SecureBit provides practical solutions
+            designed around your needs.
           </p>
         </div>
 

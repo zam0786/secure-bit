@@ -16,6 +16,7 @@ const navLinks = [
   { name: "Home", to: "/" },
   { name: "About", to: "/about" },
   { name: "Why SecureBit", to: "/why-securebit" },
+  { name: "Insights", to: "/blog" },
   { name: "Contact", to: "/contact" },
 ];
 
