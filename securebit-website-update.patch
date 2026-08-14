@@ -1,0 +1,1763 @@
+diff --git a/public/sitemap.xml b/public/sitemap.xml
+index 23d009f..f53be27 100644
+--- a/public/sitemap.xml
++++ b/public/sitemap.xml
+@@ -10,6 +10,31 @@
+     <changefreq>monthly</changefreq>
+     <priority>0.9</priority>
+   </url>
++  <url>
++    <loc>https://securebit.ca/services/vulnerability-management</loc>
++    <changefreq>monthly</changefreq>
++    <priority>0.8</priority>
++  </url>
++  <url>
++    <loc>https://securebit.ca/services/endpoint-security</loc>
++    <changefreq>monthly</changefreq>
++    <priority>0.8</priority>
++  </url>
++  <url>
++    <loc>https://securebit.ca/services/cloud-security</loc>
++    <changefreq>monthly</changefreq>
++    <priority>0.8</priority>
++  </url>
++  <url>
++    <loc>https://securebit.ca/services/governance-risk-compliance</loc>
++    <changefreq>monthly</changefreq>
++    <priority>0.8</priority>
++  </url>
++  <url>
++    <loc>https://securebit.ca/services/incident-response</loc>
++    <changefreq>monthly</changefreq>
++    <priority>0.8</priority>
++  </url>
+   <url>
+     <loc>https://securebit.ca/services/ai-security</loc>
+     <changefreq>monthly</changefreq>
+@@ -30,6 +55,26 @@
+     <changefreq>monthly</changefreq>
+     <priority>0.7</priority>
+   </url>
++  <url>
++    <loc>https://securebit.ca/blog</loc>
++    <changefreq>weekly</changefreq>
++    <priority>0.7</priority>
++  </url>
++  <url>
++    <loc>https://securebit.ca/blog/detecting-ransomware-over-smb-shares</loc>
++    <changefreq>monthly</changefreq>
++    <priority>0.6</priority>
++  </url>
++  <url>
++    <loc>https://securebit.ca/blog/on-write-script-file-visibility</loc>
++    <changefreq>monthly</changefreq>
++    <priority>0.6</priority>
++  </url>
++  <url>
++    <loc>https://securebit.ca/blog/auditing-endpoint-coverage-at-scale</loc>
++    <changefreq>monthly</changefreq>
++    <priority>0.6</priority>
++  </url>
+   <url>
+     <loc>https://securebit.ca/contact</loc>
+     <changefreq>monthly</changefreq>
+diff --git a/src/App.tsx b/src/App.tsx
+index 0cfddaa..141c31c 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -10,6 +10,13 @@ import WhySecureBit from "./pages/WhySecureBit";
+ import Services from "./pages/Services";
+ import AiSecurity from "./pages/AiSecurity";
+ import Training from "./pages/Training";
++import VulnerabilityManagement from "./pages/VulnerabilityManagement";
++import EndpointSecurity from "./pages/EndpointSecurity";
++import CloudSecurity from "./pages/CloudSecurity";
++import GovernanceRiskCompliance from "./pages/GovernanceRiskCompliance";
++import IncidentResponse from "./pages/IncidentResponse";
++import Blog from "./pages/Blog";
++import BlogPost from "./pages/BlogPost";
+ import Contact from "./pages/Contact";
+ import Auth from "./pages/Auth";
+ import AuthCallback from "./pages/AuthCallback";
+@@ -30,8 +37,15 @@ const App = () => (
+             <Route path="/about" element={<About />} />
+             <Route path="/why-securebit" element={<WhySecureBit />} />
+             <Route path="/services" element={<Services />} />
++            <Route path="/services/vulnerability-management" element={<VulnerabilityManagement />} />
++            <Route path="/services/endpoint-security" element={<EndpointSecurity />} />
++            <Route path="/services/cloud-security" element={<CloudSecurity />} />
++            <Route path="/services/governance-risk-compliance" element={<GovernanceRiskCompliance />} />
++            <Route path="/services/incident-response" element={<IncidentResponse />} />
+             <Route path="/services/ai-security" element={<AiSecurity />} />
+             <Route path="/services/training" element={<Training />} />
++            <Route path="/blog" element={<Blog />} />
++            <Route path="/blog/:slug" element={<BlogPost />} />
+             <Route path="/contact" element={<Contact />} />
+           </Route>
+           <Route path="/auth" element={<Auth />} />
+diff --git a/src/components/Footer.tsx b/src/components/Footer.tsx
+index 612883a..077b835 100644
+--- a/src/components/Footer.tsx
++++ b/src/components/Footer.tsx
+@@ -6,6 +6,7 @@ import { services } from "@/data/services";
+ const pageLinks = [
+   { name: "Home", to: "/" },
+   { name: "Services", to: "/services" },
++  { name: "Insights", to: "/blog" },
+   { name: "About", to: "/about" },
+   { name: "Why SecureBit", to: "/why-securebit" },
+   { name: "Contact", to: "/contact" },
+diff --git a/src/components/Navbar.tsx b/src/components/Navbar.tsx
+index eb02cdd..b2c2411 100644
+--- a/src/components/Navbar.tsx
++++ b/src/components/Navbar.tsx
+@@ -16,6 +16,7 @@ const navLinks = [
+   { name: "Home", to: "/" },
+   { name: "About", to: "/about" },
+   { name: "Why SecureBit", to: "/why-securebit" },
++  { name: "Insights", to: "/blog" },
+   { name: "Contact", to: "/contact" },
+ ];
+ 
+diff --git a/src/components/home/InsightsTeaser.tsx b/src/components/home/InsightsTeaser.tsx
+new file mode 100644
+index 0000000..ee988c4
+--- /dev/null
++++ b/src/components/home/InsightsTeaser.tsx
+@@ -0,0 +1,61 @@
++import { Link } from "react-router-dom";
++import { motion } from "framer-motion";
++import { Button } from "@/components/ui/button";
++import { ArrowUpRight } from "lucide-react";
++import { blogPosts } from "@/data/blog";
++
++const InsightsTeaser = () => {
++  const posts = blogPosts.slice(0, 3);
++
++  return (
++    <section className="py-24 border-b border-border">
++      <div className="container mx-auto px-4">
++        <div className="flex flex-wrap items-end justify-between gap-6 mb-12">
++          <div className="max-w-2xl">
++            <p className="eyebrow mb-4">Insights</p>
++            <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">
++              Field Notes From Real Security Work
++            </h2>
++            <p className="text-muted-foreground text-lg">
++              Practical write-ups from real endpoint security and vulnerability management work —
++              not theory.
++            </p>
++          </div>
++          <Button variant="cyberOutline" asChild>
++            <Link to="/blog">View All Insights</Link>
++          </Button>
++        </div>
++
++        <div className="grid md:grid-cols-3 gap-5">
++          {posts.map((post, i) => (
++            <motion.article
++              key={post.slug}
++              initial={{ opacity: 0, y: 20 }}
++              whileInView={{ opacity: 1, y: 0 }}
++              viewport={{ once: true }}
++              transition={{ duration: 0.4, delay: i * 0.05 }}
++              className="surface-card group flex flex-col"
++            >
++              <span className="text-xs font-medium tracking-wide uppercase text-primary bg-primary/10 rounded-full px-3 py-1 w-fit mb-4">
++                {post.category}
++              </span>
++              <h3 className="font-display text-lg font-semibold mb-3">{post.title}</h3>
++              <p className="text-muted-foreground text-sm leading-relaxed mb-5 flex-1">
++                {post.excerpt}
++              </p>
++              <Link
++                to={`/blog/${post.slug}`}
++                className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
++              >
++                Read the write-up
++                <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
++              </Link>
++            </motion.article>
++          ))}
++        </div>
++      </div>
++    </section>
++  );
++};
++
++export default InsightsTeaser;
+diff --git a/src/components/home/ServicesOverview.tsx b/src/components/home/ServicesOverview.tsx
+index 8717632..a10675f 100644
+--- a/src/components/home/ServicesOverview.tsx
++++ b/src/components/home/ServicesOverview.tsx
+@@ -5,7 +5,7 @@ import { ArrowUpRight } from "lucide-react";
+ import { services } from "@/data/services";
+ 
+ const ServicesOverview = () => {
+-  const homeServices = services.slice(0, 6);
++  const homeServices = services;
+ 
+   return (
+     <section id="services" className="py-24 border-b border-border bg-card/30">
+@@ -16,9 +16,9 @@ const ServicesOverview = () => {
+             Security Expertise Built Around Your Business
+           </h2>
+           <p className="text-muted-foreground text-lg">
+-            From cybersecurity strategy and vulnerability management to cloud security, compliance,
+-            incident readiness, and AI security, SecureBit provides practical solutions designed
+-            around your needs.
++            From cybersecurity strategy and vulnerability management to endpoint and cloud security,
++            compliance, incident readiness, and AI security, SecureBit provides practical solutions
++            designed around your needs.
+           </p>
+         </div>
+ 
+diff --git a/src/data/blog.ts b/src/data/blog.ts
+new file mode 100644
+index 0000000..0fcb1e8
+--- /dev/null
++++ b/src/data/blog.ts
+@@ -0,0 +1,191 @@
++export type BlogBlock =
++  | { type: "paragraph"; text: string }
++  | { type: "heading"; text: string }
++  | { type: "list"; items: string[] }
++  | { type: "quote"; text: string };
++
++export interface BlogPost {
++  slug: string;
++  category: string;
++  title: string;
++  excerpt: string;
++  date: string;
++  readTime: string;
++  tags: string[];
++  content: BlogBlock[];
++  linkedinTeaser: string;
++  disclosure?: string;
++}
++
++export const blogPosts: BlogPost[] = [
++  {
++    slug: "detecting-ransomware-over-smb-shares",
++    category: "Use Case",
++    title: "Detecting Ransomware Over SMB Shares: An EDR-Based Approach",
++    excerpt:
++      "Ransomware rarely announces itself on the endpoint that started it. It shows up first as a wave of file changes on a network share. Here's how to catch it there.",
++    date: "2026-07-14",
++    readTime: "6 min read",
++    tags: ["Ransomware", "EDR", "File System Containment", "SMB"],
++    linkedinTeaser:
++      "Most ransomware detection strategies watch the wrong machine. The first sign of an attack is rarely on the endpoint that got compromised — it's the sudden spike in file writes on a shared drive three hops away. Wrote up the EDR-based approach we use to catch it there: 🔗 [link]",
++    content: [
++      {
++        type: "paragraph",
++        text: "When ransomware hits an organization, the first visible symptom is usually not on the compromised endpoint. It's on a file server or shared drive, where dozens of file extensions start changing in the space of a few minutes. By the time someone notices the share is unusable, the encryption has already spread across every mapped drive that endpoint could reach.",
++      },
++      {
++        type: "paragraph",
++        text: "That gap — between initial compromise and share-wide encryption — is where an EDR-based containment strategy earns its keep. The goal isn't just to detect ransomware; it's to detect the specific signature of mass file modification against SMB shares fast enough to sever the connection before the damage becomes irreversible.",
++      },
++      { type: "heading", text: "What we watch for" },
++      {
++        type: "list",
++        items: [
++          "Abnormally high-velocity file writes and renames against a single UNC path",
++          "Sequential extension changes across many files in a short window",
++          "A single host touching an unusual number of files across multiple shares",
++          "Process lineage — is the writing process a known backup/sync tool, or something unrecognized spawning from a script or macro",
++          "Correlation with recently modified or newly created scripts on the source endpoint",
++        ],
++      },
++      {
++        type: "heading",
++        text: "Detection is only half the job",
++      },
++      {
++        type: "paragraph",
++        text: "Detecting the pattern matters far less than what happens in the next thirty seconds. A practical containment control needs to be able to automatically isolate the offending host's network access — or terminate its SMB session specifically — without waiting on an analyst to be at a keyboard. That means building and testing containment policies before an incident, not during one, and validating that the policy doesn't quietly break legitimate high-volume file operations like backup jobs or data migrations.",
++      },
++      {
++        type: "quote",
++        text: "The organizations that come through a ransomware event with a shrug, rather than a headline, are the ones who tested their containment policy against a false positive before they ever needed it against a real one.",
++      },
++      { type: "heading", text: "Where this tends to go wrong" },
++      {
++        type: "list",
++        items: [
++          "Containment thresholds tuned so loosely that real attacks slip under them",
++          "Thresholds tuned so tightly that backup software trips them weekly, training the team to ignore alerts",
++          "No tested rollback plan if containment fires on a legitimate business process",
++          "Detection logic that only watches the endpoint, not the share — missing attacks that originate from an already-compromised machine outside your EDR's visibility",
++        ],
++      },
++      {
++        type: "paragraph",
++        text: "None of this requires exotic tooling. It requires a clear-eyed view of what your EDR platform can actually see on network shares, a containment policy that's been pressure-tested against your own backup and sync traffic, and a runbook that tells the on-call analyst exactly what happens automatically versus what still needs a human decision.",
++      },
++    ],
++  },
++  {
++    slug: "on-write-script-file-visibility",
++    category: "Use Case",
++    title: "On-Write Script File Visibility: Closing a Blind Spot in Endpoint Monitoring",
++    excerpt:
++      "Most endpoint policies watch what a script does when it runs. On-write visibility watches the moment it's written to disk — before it ever executes.",
++    date: "2026-06-22",
++    readTime: "7 min read",
++    tags: ["EDR", "Script Visibility", "Detection Engineering", "Audit Evidence"],
++    linkedinTeaser:
++      "Execution-based detection has a blind spot: it only sees a malicious script after it runs. On-write visibility flips that — it watches the moment a script hits disk, before it ever executes. Broke down what a rollout of this control actually looks like, including the audit-evidence angle most teams skip: 🔗 [link]",
++    content: [
++      {
++        type: "paragraph",
++        text: "Most script-based detection is execution-based: a script runs, the EDR platform inspects the behavior, and a verdict gets made. That works well for known-bad behavior, but it means the earliest possible detection point — the moment the script file is actually written to disk — often goes completely unmonitored.",
++      },
++      {
++        type: "paragraph",
++        text: "On-write script file visibility closes that gap. Instead of waiting for execution, the control inspects script content as it's written — PowerShell, batch, VBS, and similar file types — and can flag or capture content regardless of whether the script ever runs. That's a meaningfully earlier detection point, and it catches staged payloads that an attacker drops and intends to trigger later, or through a separate mechanism entirely.",
++      },
++      { type: "heading", text: "Why it's worth the rollout effort" },
++      {
++        type: "list",
++        items: [
++          "Visibility into staged or dormant scripts before execution, not just after",
++          "Coverage for living-off-the-land techniques that rely on legitimate interpreters",
++          "A forensic record of script content even if the file is later deleted before execution",
++          "Stronger audit evidence — you can demonstrate the control saw the file, not just that nothing bad happened to run",
++        ],
++      },
++      { type: "heading", text: "What a real rollout has to account for" },
++      {
++        type: "paragraph",
++        text: "This is not a control you flip on fleet-wide and walk away from. A few things matter more than the feature toggle itself:",
++      },
++      {
++        type: "list",
++        items: [
++          "Performance impact on endpoints with high script-write volume — build/CI servers and automation hosts especially",
++          "Data handling: where captured script content goes, how long it's retained, and who can access it, since scripts frequently contain credentials or internal paths",
++          "Exclusions for legitimate high-frequency script generation (deployment tooling, config management agents) to avoid noise that drowns out real signal",
++          "Data residency and subprocessor considerations if script content leaves your environment for cloud-based analysis",
++          "A phased rollout — pilot group, monitor for false positives and performance regressions, then expand tier by tier rather than enterprise-wide on day one",
++        ],
++      },
++      {
++        type: "quote",
++        text: "The control itself is straightforward. The certification-ready evidence package proving it's actually configured, tuned, and operating as intended across every tier of your environment is where most of the real work lives.",
++      },
++      {
++        type: "paragraph",
++        text: "For regulated environments, this control also tends to draw direct auditor interest — it's a clean, demonstrable answer to \"how would you detect a script-based attack before it runs?\" Building the evidence trail (policy configuration, exclusion rationale, tiered rollout status, data handling terms) alongside the technical rollout — rather than reconstructing it after the fact — is what turns a good control into a defensible one.",
++      },
++    ],
++  },
++  {
++    slug: "auditing-endpoint-coverage-at-scale",
++    category: "Use Case",
++    title: "Auditing Endpoint Coverage at Scale: Lessons from a Multi-Subsidiary Sensor Upgrade",
++    excerpt:
++      "Upgrading EDR sensors across thousands of endpoints and multiple subsidiaries surfaces coverage gaps a single-environment rollout never would.",
++    date: "2026-05-30",
++    readTime: "6 min read",
++    tags: ["EDR", "Sensor Management", "Audit Evidence", "Compliance"],
++    linkedinTeaser:
++      "Upgraded EDR sensors across 11,600+ endpoints spanning multiple subsidiaries and both RHEL 8 and 9. The technical upgrade was the easy part — proving coverage held at every stage for auditors was the real work. Notes from that process: 🔗 [link]",
++    content: [
++      {
++        type: "paragraph",
++        text: "A sensor version upgrade sounds like a routine maintenance task until it's happening across 11,600+ endpoints spanning multiple subsidiaries, mixed OS versions, and business units that each own their own change windows. At that scale, the technical upgrade path is rarely the hard part. Proving — continuously, not just at the end — that coverage held throughout is.",
++      },
++      { type: "heading", text: "What actually breaks at scale" },
++      {
++        type: "list",
++        items: [
++          "Endpoints that silently fail to check in for a new policy version and quietly age out of coverage",
++          "OS-version-specific compatibility gaps that only surface once you're past the pilot ring (RHEL 8 vs. RHEL 9 behaving differently under the same policy)",
++          "Subsidiaries or business units with change windows that don't align with the central rollout calendar",
++          "Sensor upgrade failures that don't generate an obvious alert — the host just stops reporting current version",
++          "Assumptions about asset inventory accuracy that don't hold once you cross-reference against the sensor's own reporting",
++        ],
++      },
++      { type: "heading", text: "Structuring the rollout for provable coverage" },
++      {
++        type: "paragraph",
++        text: "The practical approach that holds up at scale is tiered, not big-bang: a pilot ring, a validation period with explicit rollback criteria, then staged expansion by business unit or subsidiary with a coverage checkpoint at each tier before moving to the next. At every checkpoint, the question isn't just \"did the upgrade succeed\" — it's \"can I show, right now, exactly which endpoints are on the target version and which aren't, and why.\"",
++      },
++      {
++        type: "quote",
++        text: "An upgrade that completes silently and an upgrade you can prove completed are two different projects. Only one of them survives an audit.",
++      },
++      { type: "heading", text: "Turning the rollout into audit evidence" },
++      {
++        type: "list",
++        items: [
++          "Coverage reporting broken out by tier, subsidiary, and OS version — not just a single fleet-wide percentage",
++          "A documented exception list for endpoints that can't be upgraded on schedule, with compensating controls noted",
++          "Version drift tracking after the rollout completes, since coverage decays quietly without ongoing monitoring",
++          "Mapping the upgrade evidence directly to the controls it supports — NIST CSF, ISO 27001, SOC 2 — rather than producing it as a one-off spreadsheet after the fact",
++        ],
++      },
++      {
++        type: "paragraph",
++        text: "None of this is exotic. It's discipline applied at a scale where manual tracking stops working — treating a sensor upgrade less like a change ticket and more like a program with its own reporting cadence, exception process, and audit trail.",
++      },
++    ],
++    disclosure:
++      "This reflects hands-on professional experience running enterprise-scale endpoint programs, not a current SecureBit client engagement.",
++  },
++];
++
++export const getBlogPost = (slug: string) => blogPosts.find((p) => p.slug === slug);
+diff --git a/src/data/services.ts b/src/data/services.ts
+index db445f9..d3474e3 100644
+--- a/src/data/services.ts
++++ b/src/data/services.ts
+@@ -1,6 +1,7 @@
+ import {
+   Compass,
+   ShieldAlert,
++  Laptop,
+   Cloud,
+   ScrollText,
+   Siren,
+@@ -31,22 +32,24 @@ export const services: ServiceDetail[] = [
+     shortTitle: "Cybersecurity Advisory",
+     icon: Compass,
+     summary:
+-      "Security assessments, cybersecurity roadmaps, maturity assessments, security architecture reviews, cyber risk assessments, executive advisory, and Fractional CISO services.",
++      "Security strategy, architecture advisory, maturity and risk assessments, CISO advisory, board-level reporting, and security backlog reduction.",
+     what: "A structured view of where your security program stands today and a practical roadmap for where it should go next.",
+     why: "Security investment only pays off when it is aligned with business objectives, risk tolerance, and the resources available to operate it.",
+     keyServices: [
+-      "Security program assessments",
+       "Cybersecurity strategy and roadmaps",
+-      "Security maturity assessments",
+-      "Security architecture reviews",
+-      "Cyber risk assessments",
+-      "Executive and board advisory",
+-      "Fractional CISO services",
++      "Security architecture advisory",
++      "Security technology evaluation",
++      "Cybersecurity maturity and risk assessments",
++      "Security program and operating model improvement",
++      "CISO advisory and fractional CISO services",
++      "Executive and board-level risk reporting",
++      "Security backlog and cyber risk prioritization",
++      "Regulated industry and financial services advisory",
+     ],
+     outcomes: [
+       "A clear, prioritized security roadmap",
+       "Security decisions tied to business risk",
+-      "Confident conversations with leadership",
++      "Confident conversations with leadership and the board",
+     ],
+   },
+   {
+@@ -56,125 +59,158 @@ export const services: ServiceDetail[] = [
+     shortTitle: "Vulnerability & Risk Management",
+     icon: ShieldAlert,
+     summary:
+-      "Vulnerability assessments, vulnerability management, attack surface assessments, risk-based prioritization, remediation strategy, and executive reporting.",
+-    what: "A repeatable process for finding weaknesses across your environment and fixing the ones that carry real business risk first.",
+-    why: "Most organizations have more vulnerabilities than capacity to remediate. Prioritization is what turns scanning into risk reduction.",
++      "Build and operate a risk-based vulnerability management program — from discovery and prioritization through remediation, compliance, and executive reporting.",
++    what: "A repeatable, end-to-end process for finding weaknesses across your environment and driving the ones that carry real business risk to closure.",
++    why: "Most organizations have more vulnerabilities than capacity to remediate. Risk-based prioritization is what turns scanning into measurable risk reduction.",
+     keyServices: [
+-      "Vulnerability assessments",
+-      "Ongoing vulnerability management",
+-      "External attack surface assessments",
+-      "Risk-based prioritization",
+-      "Remediation strategy and planning",
+-      "Executive and operational reporting",
++      "Vulnerability management program design and ownership",
++      "Asset and vulnerability discovery",
++      "Vulnerability and compliance scanning",
++      "Risk-based prioritization (CVSS, EPSS, CISA KEV, business impact)",
++      "Remediation planning and cross-team coordination",
++      "Remediation tracking, rescanning, and validation",
++      "Risk exceptions and risk acceptance",
++      "CISO and board vulnerability reporting",
+     ],
+     outcomes: [
+       "Measurable reduction in exposure",
+-      "Remediation effort focused where it matters",
+-      "Reporting leadership can act on",
++      "Remediation effort focused where it matters most",
++      "Executive reporting leadership can act on",
+     ],
++    href: "/services/vulnerability-management",
+   },
+   {
+-    slug: "cloud-infrastructure-security",
++    slug: "endpoint-security-edr-xdr",
+     number: "03",
++    title: "Endpoint Security, EDR & XDR",
++    shortTitle: "Endpoint Security",
++    icon: Laptop,
++    summary:
++      "Deploy, migrate, manage, and optimize enterprise endpoint security platforms while maintaining coverage, compliance, and operational resilience.",
++    what: "Full lifecycle management of enterprise EDR/XDR platforms — from architecture and rollout through day-to-day operations and audit readiness.",
++    why: "Endpoint platforms only deliver value when they are configured correctly, tuned continuously, and provable to auditors and leadership.",
++    keyServices: [
++      "EDR/XDR strategy, architecture, and deployment",
++      "Sensor rollout, upgrades, and troubleshooting",
++      "EDR platform migration and coexistence planning",
++      "Audit evidence collection and compliance support",
++      "Container, Kubernetes, and workload visibility",
++      "Mobile endpoint security (MDM/MTD)",
++      "Feature testing and controlled rollout",
++    ],
++    outcomes: [
++      "Consistent endpoint coverage across your fleet",
++      "Smoother platform migrations with minimal coverage gaps",
++      "Audit-ready evidence without a scramble",
++    ],
++    href: "/services/endpoint-security",
++  },
++  {
++    slug: "cloud-infrastructure-security",
++    number: "04",
+     title: "Cloud & Infrastructure Security",
+     shortTitle: "Cloud Security",
+     icon: Cloud,
+     summary:
+-      "Azure, AWS, GCP, CSPM/CNAPP, cloud architecture, identity, containers, Kubernetes, and infrastructure security.",
+-    what: "Security review and hardening of the cloud platforms, identities, workloads, and infrastructure your business runs on.",
+-    why: "Cloud environments change constantly, and misconfiguration and over-permissioned identities remain among the most common causes of incidents.",
++      "Cloud vulnerability detection and remediation, workload and container security, posture management, and continuous cloud risk monitoring.",
++    what: "Security review, prioritization, and hardening of the cloud platforms, workloads, containers, and infrastructure your business runs on.",
++    why: "Cloud environments change constantly, and misconfiguration, unpatched workloads, and over-permissioned identities remain leading causes of incidents.",
+     keyServices: [
+-      "Azure, AWS, and GCP security reviews",
+-      "CSPM and CNAPP implementation",
+-      "Secure cloud architecture design",
+-      "Identity and access management",
+-      "Container and Kubernetes security",
+-      "Network and infrastructure hardening",
++      "Cloud vulnerability and posture assessments",
++      "Cloud workload and configuration scanning",
++      "Container, Kubernetes, and runtime security",
++      "Infrastructure-as-Code and CI/CD security",
++      "Software dependency and supply-chain scanning",
++      "Risk-based prioritization and remediation tracking",
++      "Continuous monitoring and compliance reporting",
+     ],
+     outcomes: [
+       "Fewer misconfigurations and excessive permissions",
+-      "Consistent security across cloud platforms",
++      "Consistent security across cloud platforms and workloads",
+       "Cloud adoption that does not outpace security",
+     ],
++    href: "/services/cloud-security",
+   },
+   {
+     slug: "governance-risk-compliance",
+-    number: "04",
++    number: "05",
+     title: "Governance, Risk & Compliance",
+     shortTitle: "GRC",
+     icon: ScrollText,
+     summary:
+-      "NIST, ISO 27001 readiness, CIS Controls, SOC 2 readiness, security policies, risk management, third-party risk, and audit readiness.",
+-    what: "The policies, controls, and evidence that demonstrate your organization manages cyber risk responsibly.",
+-    why: "Customers, insurers, and regulators increasingly ask for proof. Preparing early avoids rushed, expensive remediation later.",
++      "Security policies and procedures, access reviews and attestation, security documentation, and audit and compliance readiness.",
++    what: "The policies, controls, access reviews, and evidence that demonstrate your organization manages cyber risk responsibly.",
++    why: "Customers, insurers, and regulators increasingly ask for proof. Maintaining readiness continuously avoids rushed, expensive remediation later.",
+     keyServices: [
+-      "NIST CSF and CIS Controls alignment",
+-      "ISO 27001 readiness",
+-      "SOC 2 readiness",
+-      "Security policy and standard development",
+-      "Risk management programs",
+-      "Third-party and vendor risk",
++      "Security policy and procedure development",
++      "Policy lifecycle management and regulatory alignment",
++      "User, privileged, and critical system access reviews",
++      "Access attestation and compliance reporting",
++      "Security documentation and knowledge-base management",
++      "NIST CSF, ISO 27001, SOC 2, and PCI DSS alignment",
+       "Audit and assessment readiness",
+     ],
+     outcomes: [
+       "Documented, defensible security governance",
+-      "Faster responses to customer security reviews",
++      "Faster responses to customer and regulator security reviews",
+       "A clear path to certification or attestation",
+     ],
++    href: "/services/governance-risk-compliance",
+   },
+   {
+     slug: "incident-response-threat-readiness",
+-    number: "05",
++    number: "06",
+     title: "Incident Response & Threat Readiness",
+     shortTitle: "Incident Response",
+     icon: Siren,
+     summary:
+-      "Incident response planning, tabletop exercises, ransomware readiness, threat hunting, detection engineering, and security control validation.",
+-    what: "Preparation and practice so your team knows exactly what to do when something goes wrong — before it does.",
+-    why: "The difference between a contained event and a business disruption is usually preparation, not technology.",
++      "Complex incident investigation, threat hunting, incident response planning, tabletop exercises, and post-incident control improvement.",
++    what: "Preparation, investigation, and response support so your team knows exactly what to do when something goes wrong — before, during, and after it does.",
++    why: "The difference between a contained event and a business disruption is usually preparation and investigation quality, not technology alone.",
+     keyServices: [
+       "Incident response plans and playbooks",
+-      "Tabletop exercises",
+-      "Ransomware readiness assessments",
+-      "Threat hunting",
+-      "Detection engineering",
+-      "Security control validation",
++      "Tabletop exercises and ransomware readiness",
++      "Phishing, malware, and ransomware investigations",
++      "Business email compromise and account takeover investigations",
++      "Threat hunting and lateral movement analysis",
++      "Containment, eradication, and recovery support",
++      "Post-incident lessons learned and control improvement",
+     ],
+     outcomes: [
+       "Faster, calmer response under pressure",
+-      "Detection gaps identified before an incident",
+-      "Clear roles, escalation, and communication",
++      "Clear scope, root cause, and impact after an incident",
++      "Stronger controls that reduce recurrence",
+     ],
++    href: "/services/incident-response",
+   },
+   {
+     slug: "ai-security-governance",
+-    number: "06",
++    number: "07",
+     title: "AI Security & Governance",
+     shortTitle: "AI Security",
+     icon: BrainCircuit,
+     summary:
+-      "Generative AI security, LLM security, AI risk assessments, RAG security, AI agent security, AI governance, data protection, and secure AI adoption.",
+-    what: "Security and governance for the AI systems, assistants, and agents your organization is adopting.",
+-    why: "AI introduces new exposure paths — sensitive data in prompts, over-permissioned agents, and tooling adopted outside of IT.",
++      "AI application discovery, shadow AI identification, AI vendor risk assessment, generative AI and LLM security, and AI governance.",
++    what: "Security and governance for the AI systems, assistants, agents, and vendors your organization is adopting — sanctioned and unsanctioned.",
++    why: "AI introduces new exposure paths — sensitive data in prompts, unmanaged tools adopted outside of IT, and vendors with unclear data handling.",
+     keyServices: [
+-      "AI security assessments",
+-      "Generative AI and LLM security",
+-      "RAG and knowledge base security",
++      "AI application and shadow AI discovery",
++      "AI vendor and data-exposure risk assessment",
++      "Generative AI, LLM, and RAG security",
+       "AI agent and tool permission review",
+-      "AI governance frameworks",
+-      "AI data protection and privacy",
+-      "Secure AI adoption guidance",
++      "AI governance frameworks and adoption guardrails",
++      "AI supply-chain and data residency assessment",
+     ],
+     outcomes: [
++      "Visibility into AI use across the organization",
+       "AI adoption without uncontrolled data exposure",
+       "Governance that keeps pace with usage",
+-      "Clear guardrails for teams building with AI",
+     ],
+     href: "/services/ai-security",
+   },
+   {
+     slug: "cybersecurity-training",
+-    number: "07",
++    number: "08",
+     title: "Cybersecurity Training",
+     shortTitle: "Training",
+     icon: GraduationCap,
+@@ -201,4 +237,4 @@ export const services: ServiceDetail[] = [
+   },
+ ];
+ 
+-export const getService = (slug: string) => services.find((s) => s.slug === slug);
+\ No newline at end of file
++export const getService = (slug: string) => services.find((s) => s.slug === slug);
+diff --git a/src/pages/AiSecurity.tsx b/src/pages/AiSecurity.tsx
+index a98e894..4965275 100644
+--- a/src/pages/AiSecurity.tsx
++++ b/src/pages/AiSecurity.tsx
+@@ -6,13 +6,16 @@ import { Button } from "@/components/ui/button";
+ import { AlertTriangle, Check } from "lucide-react";
+ 
+ const capabilities = [
++  { title: "AI Application & Shadow AI Discovery", text: "Identify and assess unauthorized, high-risk, or unmanaged AI technologies across your organization." },
++  { title: "AI Vendor Risk Assessment", text: "Evaluate AI applications and vendors based on security, privacy, supply-chain, regulatory, and business risk." },
++  { title: "AI Data-Exposure Assessment", text: "Understand where organizational data flows into AI tools and models." },
+   { title: "AI Security Assessments", text: "Review how AI is used across your organization and where it introduces risk." },
+   { title: "Generative AI Security", text: "Secure assistants and copilots handling business and customer information." },
+   { title: "LLM Security", text: "Address prompt injection, output handling, and model integration weaknesses." },
+   { title: "RAG Security", text: "Protect retrieval pipelines and the knowledge sources they expose." },
+   { title: "AI Agent Security", text: "Scope agent permissions, tools, and actions to the minimum required." },
+   { title: "AI Governance", text: "Define approval, oversight, and accountability for AI use." },
+-  { title: "AI Risk Management", text: "Bring AI risk into your existing risk management process." },
++  { title: "AI Supply-Chain & Data Residency", text: "Assess AI supply-chain, geopolitical, and data residency risk for regulated environments." },
+   { title: "AI Data Protection", text: "Control what data reaches models, logs, and third parties." },
+   { title: "Secure AI Adoption", text: "Practical guardrails so teams can build with AI safely." },
+ ];
+@@ -86,6 +89,23 @@ const AiSecurity = () => {
+         </div>
+       </section>
+ 
++      <section className="py-16 border-b border-border">
++        <div className="container mx-auto px-4">
++          <div className="max-w-3xl">
++            <h2 className="font-display text-xl font-semibold mb-3">
++              For regulated and financial institutions
++            </h2>
++            <p className="text-muted-foreground leading-relaxed mb-4">
++              Discover → Identify → Assess → Prioritize → Control → Monitor. We also help
++              organizations evaluate and operationalize AI-driven security capabilities —
++              AI-assisted threat detection, investigation, threat hunting, and behavioral
++              analysis — without claiming specific vendor features, licensing, or certifications
++              unless verified.
++            </p>
++          </div>
++        </div>
++      </section>
++
+       <FinalCTA
+         heading="Planning an AI rollout?"
+         text="We can review your AI use cases, integrations, and data flows, then help you put practical guardrails and governance in place before risk accumulates."
+diff --git a/src/pages/Blog.tsx b/src/pages/Blog.tsx
+new file mode 100644
+index 0000000..64a2f34
+--- /dev/null
++++ b/src/pages/Blog.tsx
+@@ -0,0 +1,65 @@
++import { Link } from "react-router-dom";
++import Seo from "@/components/Seo";
++import PageHero from "@/components/PageHero";
++import { ArrowUpRight, Clock } from "lucide-react";
++import { blogPosts } from "@/data/blog";
++
++const Blog = () => {
++  return (
++    <>
++      <Seo
++        title="Insights & Use Cases | SecureBit"
++        description="Practical field notes from real endpoint security and vulnerability management work — ransomware detection over SMB, on-write script visibility, and endpoint coverage at scale."
++        path="/blog"
++      />
++      <PageHero
++        eyebrow="Insights"
++        title="Field Notes From Real Security Work"
++        text="Practical write-ups on the detection controls, rollouts, and audit challenges we've worked through directly — not theory, not marketing copy."
++      />
++
++      <section className="py-20">
++        <div className="container mx-auto px-4">
++          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
++            {blogPosts.map((post) => (
++              <article key={post.slug} className="surface-card group flex flex-col">
++                <div className="flex items-center gap-3 mb-4">
++                  <span className="text-xs font-medium tracking-wide uppercase text-primary bg-primary/10 rounded-full px-3 py-1">
++                    {post.category}
++                  </span>
++                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
++                    <Clock className="w-3.5 h-3.5" aria-hidden="true" />
++                    {post.readTime}
++                  </span>
++                </div>
++                <h2 className="font-display text-xl font-semibold mb-3">{post.title}</h2>
++                <p className="text-muted-foreground text-sm leading-relaxed mb-5 flex-1">
++                  {post.excerpt}
++                </p>
++                <div className="flex flex-wrap gap-2 mb-5">
++                  {post.tags.slice(0, 3).map((tag) => (
++                    <span
++                      key={tag}
++                      className="text-xs text-muted-foreground border border-border rounded-full px-2.5 py-1"
++                    >
++                      {tag}
++                    </span>
++                  ))}
++                </div>
++                <Link
++                  to={`/blog/${post.slug}`}
++                  className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
++                >
++                  Read the write-up
++                  <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
++                </Link>
++              </article>
++            ))}
++          </div>
++        </div>
++      </section>
++    </>
++  );
++};
++
++export default Blog;
+diff --git a/src/pages/BlogPost.tsx b/src/pages/BlogPost.tsx
+new file mode 100644
+index 0000000..4f17437
+--- /dev/null
++++ b/src/pages/BlogPost.tsx
+@@ -0,0 +1,116 @@
++import { Link, useParams, Navigate } from "react-router-dom";
++import Seo from "@/components/Seo";
++import PageHero from "@/components/PageHero";
++import FinalCTA from "@/components/home/FinalCTA";
++import { Button } from "@/components/ui/button";
++import { Check, Clock, Copy, Linkedin } from "lucide-react";
++import { getBlogPost, type BlogBlock } from "@/data/blog";
++import { useState } from "react";
++
++const renderBlock = (block: BlogBlock, i: number) => {
++  switch (block.type) {
++    case "heading":
++      return (
++        <h2 key={i} className="font-display text-2xl font-bold mt-10 mb-4">
++          {block.text}
++        </h2>
++      );
++    case "list":
++      return (
++        <ul key={i} className="space-y-2.5 my-6">
++          {block.items.map((item) => (
++            <li key={item} className="flex gap-2.5 text-muted-foreground leading-relaxed">
++              <Check className="w-4 h-4 text-primary flex-shrink-0 mt-1" aria-hidden="true" />
++              {item}
++            </li>
++          ))}
++        </ul>
++      );
++    case "quote":
++      return (
++        <blockquote
++          key={i}
++          className="border-l-2 border-primary pl-5 my-8 text-foreground text-lg font-medium leading-relaxed italic"
++        >
++          {block.text}
++        </blockquote>
++      );
++    default:
++      return (
++        <p key={i} className="text-muted-foreground leading-relaxed my-5">
++          {block.text}
++        </p>
++      );
++  }
++};
++
++const BlogPost = () => {
++  const { slug } = useParams();
++  const post = slug ? getBlogPost(slug) : undefined;
++  const [copied, setCopied] = useState(false);
++
++  if (!post) {
++    return <Navigate to="/blog" replace />;
++  }
++
++  const handleCopy = async () => {
++    try {
++      await navigator.clipboard.writeText(post.linkedinTeaser);
++      setCopied(true);
++      setTimeout(() => setCopied(false), 2000);
++    } catch {
++      setCopied(false);
++    }
++  };
++
++  return (
++    <>
++      <Seo title={`${post.title} | SecureBit`} description={post.excerpt} path={`/blog/${post.slug}`} />
++      <PageHero eyebrow={post.category} title={post.title} text={post.excerpt}>
++        <div className="flex items-center gap-2 text-sm text-muted-foreground">
++          <Clock className="w-4 h-4" aria-hidden="true" />
++          {post.readTime}
++        </div>
++      </PageHero>
++
++      <section className="py-16 border-b border-border">
++        <div className="container mx-auto px-4 max-w-3xl">
++          {post.content.map(renderBlock)}
++
++          {post.disclosure && (
++            <p className="text-xs text-muted-foreground border-t border-border pt-6 mt-10">
++              {post.disclosure}
++            </p>
++          )}
++
++          <div className="mt-12 rounded-xl border border-border bg-card p-6">
++            <div className="flex items-center gap-2 mb-3">
++              <Linkedin className="w-4 h-4 text-primary" aria-hidden="true" />
++              <h3 className="font-display text-sm font-semibold">Share this on LinkedIn</h3>
++            </div>
++            <p className="text-sm text-muted-foreground leading-relaxed mb-4">
++              {post.linkedinTeaser}
++            </p>
++            <Button variant="cyberOutline" size="sm" onClick={handleCopy}>
++              <Copy className="w-4 h-4" aria-hidden="true" />
++              {copied ? "Copied" : "Copy teaser text"}
++            </Button>
++          </div>
++        </div>
++      </section>
++
++      <div className="container mx-auto px-4 py-8 max-w-3xl">
++        <Link to="/blog" className="text-sm font-medium text-primary hover:underline">
++          ← Back to all insights
++        </Link>
++      </div>
++
++      <FinalCTA
++        heading="Working through something similar?"
++        text="We can help you assess, design, and roll out the same kind of control in your own environment."
++      />
++    </>
++  );
++};
++
++export default BlogPost;
+diff --git a/src/pages/CloudSecurity.tsx b/src/pages/CloudSecurity.tsx
+new file mode 100644
+index 0000000..5461836
+--- /dev/null
++++ b/src/pages/CloudSecurity.tsx
+@@ -0,0 +1,176 @@
++import { Link } from "react-router-dom";
++import Seo from "@/components/Seo";
++import PageHero from "@/components/PageHero";
++import FinalCTA from "@/components/home/FinalCTA";
++import { Button } from "@/components/ui/button";
++import { Check, ArrowRight } from "lucide-react";
++
++const lifecycle = ["Discover", "Assess", "Prioritize", "Remediate", "Validate", "Monitor"];
++
++const capabilities = [
++  { title: "Cloud Vulnerability Assessments", text: "Identify vulnerabilities across cloud workloads and services." },
++  { title: "Cloud Security Posture", text: "Assess configuration and posture against security baselines." },
++  { title: "Workload Vulnerability Scanning", text: "Scan cloud workloads on an ongoing basis, not just point-in-time." },
++  { title: "Misconfiguration Assessment", text: "Find and prioritize risky configurations before they're exploited." },
++  { title: "Container & Kubernetes Security", text: "Secure container images, orchestration, and runtime environments." },
++  { title: "Infrastructure-as-Code Security", text: "Catch risk in Terraform, CloudFormation, and similar templates before deploy." },
++  { title: "CI/CD Security", text: "Build security checks into your delivery pipeline." },
++  { title: "Application & Dependency Vulnerabilities", text: "Identify vulnerable and outdated dependencies in your software supply chain." },
++  { title: "Remediation Action Plans", text: "Turn findings into coordinated, actionable remediation plans." },
++  { title: "Developer & Infrastructure Coordination", text: "Work directly with development and infrastructure teams to close findings." },
++  { title: "Remediation Tracking & Rescanning", text: "Track fixes through closure with validation and rescanning." },
++  { title: "Continuous Monitoring", text: "Ongoing visibility into cloud workload and configuration risk, not a one-time scan." },
++];
++
++const devSecurityItems = [
++  "Open-source dependency vulnerabilities",
++  "Software composition analysis",
++  "Container image vulnerabilities",
++  "Infrastructure-as-Code security",
++  "Kubernetes security",
++  "CI/CD security integration",
++  "Cloud workload vulnerabilities",
++  "Developer remediation guidance",
++];
++
++const complianceItems = [
++  "Compliance scanning",
++  "Security control validation",
++  "Audit evidence",
++  "Remediation tracking",
++  "Risk exceptions",
++  "Continuous compliance monitoring",
++];
++
++const CloudSecurity = () => {
++  return (
++    <>
++      <Seo
++        title="Cloud & Infrastructure Security Services | SecureBit"
++        description="SecureBit helps organizations detect cloud vulnerabilities and misconfigurations, secure containers and workloads, and continuously monitor cloud security posture."
++        path="/services/cloud-security"
++      />
++      <PageHero
++        eyebrow="Cloud & Infrastructure Security"
++        title="Find, Prioritize, and Close Cloud Risk — Continuously"
++        text="SecureBit helps organizations identify cloud vulnerabilities and misconfigurations, prioritize the risks that matter most, coordinate remediation, and continuously validate their cloud security posture."
++      >
++        <Button variant="cyber" asChild>
++          <Link to="/contact">Book a Security Consultation</Link>
++        </Button>
++      </PageHero>
++
++      <section className="py-16 border-b border-border bg-card/30">
++        <div className="container mx-auto px-4">
++          <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
++            {lifecycle.map((step, i) => (
++              <div key={step} className="flex items-center gap-3 md:gap-4">
++                <span className="rounded-full border border-primary/40 bg-card px-4 py-2 text-sm font-medium text-foreground">
++                  {step}
++                </span>
++                {i < lifecycle.length - 1 && (
++                  <ArrowRight className="w-4 h-4 text-muted-foreground flex-shrink-0" aria-hidden="true" />
++                )}
++              </div>
++            ))}
++          </div>
++        </div>
++      </section>
++
++      <section className="py-24 border-b border-border">
++        <div className="container mx-auto px-4">
++          <h2 className="font-display text-3xl font-bold mb-12 max-w-2xl">
++            Cloud vulnerability detection & remediation
++          </h2>
++          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
++            {capabilities.map((item) => (
++              <article key={item.title} className="surface-card">
++                <Check className="w-5 h-5 text-primary mb-4" aria-hidden="true" />
++                <h3 className="font-display text-lg font-semibold mb-2">{item.title}</h3>
++                <p className="text-muted-foreground text-sm leading-relaxed">{item.text}</p>
++              </article>
++            ))}
++          </div>
++        </div>
++      </section>
++
++      <section className="py-24 border-b border-border bg-card/30">
++        <div className="container mx-auto px-4">
++          <div className="max-w-2xl mb-10">
++            <h2 className="font-display text-3xl font-bold mb-5">Developer & cloud security</h2>
++            <p className="text-muted-foreground text-lg">
++              Cloud vulnerability management works best as collaboration, not a hand-off — security
++              findings that route directly to the teams who can act on them.
++            </p>
++          </div>
++          <div className="flex flex-wrap items-center gap-3 md:gap-4 mb-10">
++            {["Security", "Cloud", "Infrastructure", "Development"].map((step, i, arr) => (
++              <div key={step} className="flex items-center gap-3 md:gap-4">
++                <span className="rounded-full border border-primary/40 bg-card px-4 py-2 text-sm font-medium text-foreground">
++                  {step}
++                </span>
++                {i < arr.length - 1 && (
++                  <ArrowRight className="w-4 h-4 text-muted-foreground flex-shrink-0" aria-hidden="true" />
++                )}
++              </div>
++            ))}
++          </div>
++          <ul className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
++            {devSecurityItems.map((item) => (
++              <li
++                key={item}
++                className="flex items-start gap-2.5 rounded-lg border border-border bg-card p-4 text-sm"
++              >
++                <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" aria-hidden="true" />
++                <span className="text-foreground">{item}</span>
++              </li>
++            ))}
++          </ul>
++        </div>
++      </section>
++
++      <section className="py-16 border-b border-border">
++        <div className="container mx-auto px-4">
++          <div className="max-w-3xl mb-8">
++            <h2 className="font-display text-xl font-semibold mb-3">Cloud compliance</h2>
++            <p className="text-muted-foreground leading-relaxed">
++              Cloud vulnerability management connects directly to your compliance program, not a
++              separate workstream.
++            </p>
++          </div>
++          <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 max-w-3xl">
++            {complianceItems.map((item) => (
++              <li
++                key={item}
++                className="flex items-center gap-2.5 text-sm rounded-lg border border-border bg-card px-4 py-3"
++              >
++                <Check className="w-4 h-4 text-primary flex-shrink-0" aria-hidden="true" />
++                {item}
++              </li>
++            ))}
++          </ul>
++        </div>
++      </section>
++
++      <section className="py-16 border-b border-border bg-card/30">
++        <div className="container mx-auto px-4">
++          <div className="max-w-3xl">
++            <h2 className="font-display text-xl font-semibold mb-3">Technology experience</h2>
++            <p className="text-muted-foreground leading-relaxed">
++              Experience working with Prisma Cloud, Snyk, and other cloud-native security
++              platforms. Referenced as technology experience — not as official vendor
++              partnerships unless explicitly stated.
++            </p>
++          </div>
++        </div>
++      </section>
++
++      <FinalCTA
++        heading="Not sure what's exposed in your cloud environment?"
++        text="We can run a cloud vulnerability and posture assessment, prioritize findings by real risk, and help you build a remediation plan your teams can execute."
++      />
++    </>
++  );
++};
++
++export default CloudSecurity;
+diff --git a/src/pages/EndpointSecurity.tsx b/src/pages/EndpointSecurity.tsx
+new file mode 100644
+index 0000000..74a2c63
+--- /dev/null
++++ b/src/pages/EndpointSecurity.tsx
+@@ -0,0 +1,155 @@
++import { Link } from "react-router-dom";
++import Seo from "@/components/Seo";
++import PageHero from "@/components/PageHero";
++import FinalCTA from "@/components/home/FinalCTA";
++import { Button } from "@/components/ui/button";
++import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
++import { Check } from "lucide-react";
++
++const tabGroups = [
++  {
++    value: "lifecycle",
++    label: "EDR Lifecycle",
++    heading: "EDR / XDR lifecycle management",
++    items: [
++      "Strategy and architecture",
++      "Deployment and configuration",
++      "Pilot testing and enterprise rollout",
++      "Sensor/agent deployment and upgrades",
++      "Troubleshooting and operational management",
++      "Feature testing and controlled deployment",
++      "Optimization and platform retirement",
++    ],
++  },
++  {
++    value: "migration",
++    label: "Migration",
++    heading: "EDR platform migration",
++    items: [
++      "Current-state assessment",
++      "EDR platform evaluation",
++      "Migration strategy and coexistence planning",
++      "Pilot deployment",
++      "Enterprise deployment",
++      "Security coverage validation",
++      "Rollback planning",
++      "Legacy EDR decommissioning",
++      "Post-migration validation",
++    ],
++  },
++  {
++    value: "audit",
++    label: "Audit & Compliance",
++    heading: "EDR audit, compliance & assurance",
++    items: [
++      "Preparing EDR artifacts for internal and external auditors",
++      "Responding to auditor questions",
++      "Evidence collection and configuration/policy evidence",
++      "Demonstrating EDR coverage",
++      "Audit finding remediation and corrective action plans",
++      "Tracking findings through closure",
++      "Continuous audit readiness and executive reporting",
++    ],
++  },
++  {
++    value: "container",
++    label: "Container & Workload",
++    heading: "Container & workload security",
++    items: [
++      "Container, Kubernetes, and container image security",
++      "Runtime security and cloud workload security",
++      "Workload visibility",
++      "Supported security agent and telemetry deployment",
++      "Security policy validation and troubleshooting",
++      "EDR/XDR integration with cloud and workload environments",
++    ],
++  },
++  {
++    value: "mobile",
++    label: "Mobile Security",
++    heading: "Mobile endpoint security",
++    items: [
++      "Deployment and management (e.g. Lookout)",
++      "Device onboarding",
++      "Security posture monitoring and mobile threat detection",
++      "BYOD risk management",
++      "Mobile application security and data protection",
++      "Troubleshooting and operational management",
++    ],
++  },
++];
++
++const EndpointSecurity = () => {
++  return (
++    <>
++      <Seo
++        title="Endpoint Security, EDR & XDR Services | SecureBit"
++        description="SecureBit helps organizations deploy, migrate, manage, and audit enterprise EDR/XDR platforms — including container, workload, and mobile endpoint security."
++        path="/services/endpoint-security"
++      />
++      <PageHero
++        eyebrow="Endpoint Security, EDR & XDR"
++        title="Deploy, Manage, and Optimize Endpoint Security With Confidence"
++        text="Deploy, migrate, manage, and optimize enterprise endpoint security platforms while maintaining security coverage, compliance, and operational resilience."
++      >
++        <Button variant="cyber" asChild>
++          <Link to="/contact">Book a Security Consultation</Link>
++        </Button>
++      </PageHero>
++
++      <section className="py-24 border-b border-border">
++        <div className="container mx-auto px-4">
++          <Tabs defaultValue="lifecycle" className="w-full">
++            <TabsList className="flex flex-wrap h-auto gap-2 bg-transparent p-0 mb-10">
++              {tabGroups.map((tab) => (
++                <TabsTrigger
++                  key={tab.value}
++                  value={tab.value}
++                  className="rounded-full border border-border bg-secondary/60 px-4 py-2 text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-none"
++                >
++                  {tab.label}
++                </TabsTrigger>
++              ))}
++            </TabsList>
++            {tabGroups.map((tab) => (
++              <TabsContent key={tab.value} value={tab.value} className="mt-0">
++                <h2 className="font-display text-2xl md:text-3xl font-bold mb-8">{tab.heading}</h2>
++                <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
++                  {tab.items.map((item) => (
++                    <li
++                      key={item}
++                      className="flex items-start gap-2.5 rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground"
++                    >
++                      <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" aria-hidden="true" />
++                      {item}
++                    </li>
++                  ))}
++                </ul>
++              </TabsContent>
++            ))}
++          </Tabs>
++        </div>
++      </section>
++
++      <section className="py-16 border-b border-border bg-card/30">
++        <div className="container mx-auto px-4">
++          <div className="max-w-3xl">
++            <h2 className="font-display text-xl font-semibold mb-3">Technology experience</h2>
++            <p className="text-muted-foreground leading-relaxed">
++              Hands-on experience across CrowdStrike, FireEye HX, and Lookout, spanning Windows,
++              Linux, macOS, cloud, and container/Kubernetes endpoints. Referenced as technology
++              experience — not as official vendor partnerships.
++            </p>
++          </div>
++        </div>
++      </section>
++
++      <FinalCTA
++        heading="Migrating or scaling your EDR platform?"
++        text="We can assess your current endpoint coverage, plan a migration or rollout, and get you audit-ready evidence along the way."
++      />
++    </>
++  );
++};
++
++export default EndpointSecurity;
+diff --git a/src/pages/GovernanceRiskCompliance.tsx b/src/pages/GovernanceRiskCompliance.tsx
+new file mode 100644
+index 0000000..ff289a3
+--- /dev/null
++++ b/src/pages/GovernanceRiskCompliance.tsx
+@@ -0,0 +1,129 @@
++import { Link } from "react-router-dom";
++import Seo from "@/components/Seo";
++import PageHero from "@/components/PageHero";
++import FinalCTA from "@/components/home/FinalCTA";
++import { Button } from "@/components/ui/button";
++import {
++  Accordion,
++  AccordionContent,
++  AccordionItem,
++  AccordionTrigger,
++} from "@/components/ui/accordion";
++import { Check, ArrowRight } from "lucide-react";
++
++const policyLifecycle = ["Develop", "Approve", "Implement", "Review", "Update"];
++
++const sections = [
++  {
++    value: "policies",
++    title: "Security Policies & Procedures",
++    intro:
++      "SecureBit helps organizations build and maintain practical security policies and procedures that remain aligned with business, technology, and compliance requirements.",
++    items: [
++      "Security policy development and procedure development",
++      "Policy lifecycle management and periodic reviews",
++      "Security standards and guidelines",
++      "Policy gap assessments and regulatory alignment",
++      "Control mapping and policy approval workflows",
++      "Version control",
++    ],
++  },
++  {
++    value: "access",
++    title: "Access Reviews & Attestation",
++    intro:
++      "SecureBit helps organizations validate access to critical systems and sensitive information, support compliance attestations, and reduce excessive or inappropriate access.",
++    items: [
++      "User, privileged, and application access reviews",
++      "Critical systems and applications access reviews",
++      "Periodic access certification and attestation",
++      "Identification of inappropriate or excessive access",
++      "Evidence collection and compliance reporting",
++      "Remediation tracking and audit support",
++    ],
++  },
++  {
++    value: "documentation",
++    title: "Security Documentation & Knowledge Management",
++    intro:
++      "SecureBit helps organizations turn fragmented and outdated security documentation into structured, maintainable, and audit-ready security knowledge.",
++    items: [
++      "Security documentation cleanup (e.g. Confluence)",
++      "Security knowledge-base organization",
++      "Documentation lifecycle management and standardization",
++      "Operational runbooks and audit documentation",
++      "Evidence organization and documentation ownership",
++      "Review processes to keep documentation audit-ready",
++    ],
++  },
++];
++
++const GovernanceRiskCompliance = () => {
++  return (
++    <>
++      <Seo
++        title="Governance, Risk & Compliance Services | SecureBit"
++        description="SecureBit helps organizations build security policies, run access reviews and attestation, organize security documentation, and stay audit-ready across NIST, ISO 27001, SOC 2, and PCI DSS."
++        path="/services/governance-risk-compliance"
++      />
++      <PageHero
++        eyebrow="Governance, Risk & Compliance"
++        title="Practical Policies, Clean Access, Audit-Ready Evidence"
++        text="Build practical security policies, validate access to critical systems, organize your security documentation, and stay continuously audit-ready — not just before a review."
++      >
++        <Button variant="cyber" asChild>
++          <Link to="/contact">Book a Security Consultation</Link>
++        </Button>
++      </PageHero>
++
++      <section className="py-16 border-b border-border bg-card/30">
++        <div className="container mx-auto px-4">
++          <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
++            {policyLifecycle.map((step, i) => (
++              <div key={step} className="flex items-center gap-3 md:gap-4">
++                <span className="rounded-full border border-primary/40 bg-card px-4 py-2 text-sm font-medium text-foreground">
++                  {step}
++                </span>
++                {i < policyLifecycle.length - 1 && (
++                  <ArrowRight className="w-4 h-4 text-muted-foreground flex-shrink-0" aria-hidden="true" />
++                )}
++              </div>
++            ))}
++          </div>
++        </div>
++      </section>
++
++      <section className="py-24 border-b border-border">
++        <div className="container mx-auto px-4 max-w-4xl">
++          <Accordion type="single" collapsible defaultValue="policies" className="w-full">
++            {sections.map((section) => (
++              <AccordionItem key={section.value} value={section.value} className="border-border">
++                <AccordionTrigger className="font-display text-lg md:text-xl font-semibold hover:no-underline">
++                  {section.title}
++                </AccordionTrigger>
++                <AccordionContent>
++                  <p className="text-muted-foreground mb-6 leading-relaxed">{section.intro}</p>
++                  <ul className="grid sm:grid-cols-2 gap-3">
++                    {section.items.map((item) => (
++                      <li key={item} className="flex items-start gap-2.5 text-sm text-muted-foreground">
++                        <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" aria-hidden="true" />
++                        {item}
++                      </li>
++                    ))}
++                  </ul>
++                </AccordionContent>
++              </AccordionItem>
++            ))}
++          </Accordion>
++        </div>
++      </section>
++
++      <FinalCTA
++        heading="Preparing for an audit or customer security review?"
++        text="We can help you tighten policies, clean up access, and organize documentation so you're ready before the request comes in."
++      />
++    </>
++  );
++};
++
++export default GovernanceRiskCompliance;
+diff --git a/src/pages/IncidentResponse.tsx b/src/pages/IncidentResponse.tsx
+new file mode 100644
+index 0000000..957df44
+--- /dev/null
++++ b/src/pages/IncidentResponse.tsx
+@@ -0,0 +1,126 @@
++import { Link } from "react-router-dom";
++import Seo from "@/components/Seo";
++import PageHero from "@/components/PageHero";
++import FinalCTA from "@/components/home/FinalCTA";
++import { Button } from "@/components/ui/button";
++import { Check, ArrowRight } from "lucide-react";
++
++const lifecycle = ["Detect", "Investigate", "Contain", "Eradicate", "Recover", "Learn", "Strengthen"];
++
++const investigationTypes = [
++  "Phishing investigations",
++  "Ransomware investigations",
++  "Malware investigations",
++  "Advanced persistence investigations",
++  "Account compromise and credential theft",
++  "SIM swapping attacks",
++  "Smishing",
++  "Business email compromise",
++  "Endpoint compromise",
++  "Suspicious authentication activity",
++  "Lateral movement investigation",
++  "Threat hunting and root-cause analysis",
++];
++
++const advancedThreat = [
++  "Persistence mechanisms",
++  "Malware behavior",
++  "Endpoint telemetry",
++  "Authentication activity",
++  "Lateral movement",
++  "Command-and-control indicators",
++  "Compromised accounts",
++  "Suspicious processes",
++  "Network activity",
++  "Threat intelligence correlation",
++  "Timeline reconstruction",
++];
++
++const IncidentResponse = () => {
++  return (
++    <>
++      <Seo
++        title="Incident Response & Threat Readiness | SecureBit"
++        description="SecureBit helps organizations investigate complex security incidents, contain threats, recover operations, and strengthen controls to reduce recurrence."
++        path="/services/incident-response"
++      />
++      <PageHero
++        eyebrow="Incident Response & Threat Readiness"
++        title="Investigate, Contain, and Recover With Confidence"
++        text="When a security incident becomes complex, SecureBit helps organizations understand what happened, determine the scope and root cause, contain the threat, recover operations, and strengthen controls to reduce recurrence."
++      >
++        <Button variant="cyber" asChild>
++          <Link to="/contact">Book a Security Consultation</Link>
++        </Button>
++      </PageHero>
++
++      <section className="py-16 border-b border-border bg-card/30">
++        <div className="container mx-auto px-4">
++          <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
++            {lifecycle.map((step, i) => (
++              <div key={step} className="flex items-center gap-3 md:gap-4">
++                <span className="rounded-full border border-primary/40 bg-card px-4 py-2 text-sm font-medium text-foreground">
++                  {step}
++                </span>
++                {i < lifecycle.length - 1 && (
++                  <ArrowRight className="w-4 h-4 text-muted-foreground flex-shrink-0" aria-hidden="true" />
++                )}
++              </div>
++            ))}
++          </div>
++        </div>
++      </section>
++
++      <section className="py-24 border-b border-border">
++        <div className="container mx-auto px-4">
++          <div className="max-w-2xl mb-12">
++            <h2 className="font-display text-3xl font-bold mb-5">
++              Complex incident investigation & response
++            </h2>
++          </div>
++          <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
++            {investigationTypes.map((item) => (
++              <li
++                key={item}
++                className="flex items-start gap-2.5 rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground"
++              >
++                <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" aria-hidden="true" />
++                {item}
++              </li>
++            ))}
++          </ul>
++        </div>
++      </section>
++
++      <section className="py-24 border-b border-border bg-card/30">
++        <div className="container mx-auto px-4">
++          <div className="max-w-3xl mb-12">
++            <h2 className="font-display text-3xl font-bold mb-5">Advanced threat investigation</h2>
++            <p className="text-muted-foreground text-lg">
++              Evidence-driven investigation to understand attacker activity, scope, impact, and
++              root cause.
++            </p>
++          </div>
++          <ul className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
++            {advancedThreat.map((item) => (
++              <li
++                key={item}
++                className="flex items-start gap-2.5 rounded-lg border border-border bg-card p-4 text-sm"
++              >
++                <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" aria-hidden="true" />
++                <span className="text-foreground">{item}</span>
++              </li>
++            ))}
++          </ul>
++        </div>
++      </section>
++
++      <FinalCTA
++        heading="In the middle of an incident — or preparing for one?"
++        text="We can help you investigate, contain, and recover, or build the readiness and playbooks so your team is prepared before something happens."
++      />
++    </>
++  );
++};
++
++export default IncidentResponse;
+diff --git a/src/pages/Index.tsx b/src/pages/Index.tsx
+index 1747d26..94c7c6c 100644
+--- a/src/pages/Index.tsx
++++ b/src/pages/Index.tsx
+@@ -6,6 +6,7 @@ import RiskToResilience from "@/components/home/RiskToResilience";
+ import WhySecureBitSection from "@/components/home/WhySecureBitSection";
+ import WhoWeHelp from "@/components/home/WhoWeHelp";
+ import EngagementModels from "@/components/home/EngagementModels";
++import InsightsTeaser from "@/components/home/InsightsTeaser";
+ import FinalCTA from "@/components/home/FinalCTA";
+ 
+ const Index = () => {
+@@ -23,6 +24,7 @@ const Index = () => {
+       <WhySecureBitSection />
+       <WhoWeHelp />
+       <EngagementModels />
++      <InsightsTeaser />
+       <FinalCTA />
+     </>
+   );
+diff --git a/src/pages/VulnerabilityManagement.tsx b/src/pages/VulnerabilityManagement.tsx
+new file mode 100644
+index 0000000..5f5d6c2
+--- /dev/null
++++ b/src/pages/VulnerabilityManagement.tsx
+@@ -0,0 +1,210 @@
++import { Link } from "react-router-dom";
++import Seo from "@/components/Seo";
++import PageHero from "@/components/PageHero";
++import FinalCTA from "@/components/home/FinalCTA";
++import { Button } from "@/components/ui/button";
++import { Check, ArrowRight } from "lucide-react";
++
++const lifecycle = ["Identify", "Prioritize", "Engage", "Remediate", "Validate", "Report"];
++
++const programCapabilities = [
++  { title: "Program Design & Ownership", text: "Structure and operate a vulnerability management program with clear ownership." },
++  { title: "Asset & Vulnerability Discovery", text: "Identify assets and vulnerabilities across on-prem, cloud, endpoint, and application environments." },
++  { title: "Vulnerability & Compliance Scanning", text: "Run and tune scanning against security and compliance baselines." },
++  { title: "Vulnerability Validation", text: "Confirm findings are real and exploitable before they consume remediation effort." },
++  { title: "Risk-Based Prioritization", text: "Rank findings by exploitability, asset criticality, and business impact — not severity alone." },
++  { title: "Remediation Planning", text: "Build action plans coordinated with infrastructure, application, cloud, and endpoint teams." },
++  { title: "Remediation Tracking", text: "Track findings through closure with rescanning and validation." },
++  { title: "Risk Exceptions & Acceptance", text: "Formalize exceptions and risk acceptance where remediation isn't immediately feasible." },
++  { title: "Continuous Improvement", text: "Refine scanning coverage, SLAs, and process as the program matures." },
++];
++
++const prioritizationFactors = [
++  "CVSS",
++  "EPSS",
++  "CISA KEV",
++  "Asset criticality",
++  "Business impact",
++  "Exploitability",
++  "Threat intelligence",
++  "Regulatory requirements",
++];
++
++const reportingItems = [
++  "CISO vulnerability reporting",
++  "Executive dashboards",
++  "Board-level risk updates",
++  "Critical and high-risk exposure",
++  "Vulnerability aging",
++  "Remediation trends",
++  "Overdue vulnerabilities",
++  "Residual risk",
++  "Compliance posture",
++  "Strategic recommendations",
++];
++
++const enterpriseCapabilities = [
++  "End-to-end vulnerability management program ownership",
++  "Enterprise-wide vulnerability discovery and assessment",
++  "Continuous vulnerability and compliance scanning",
++  "Risk-based vulnerability prioritization",
++  "Driving remediation across multiple business and technology teams",
++  "Establishing remediation objectives and timelines",
++  "Tracking remediation against security objectives",
++  "Managing critical and high-risk vulnerabilities",
++  "Risk exception and acceptance management",
++  "Remediation validation and closure",
++  "Executive and CISO reporting",
++  "Board-level risk communication",
++  "Continuous improvement of the vulnerability management program",
++];
++
++const VulnerabilityManagement = () => {
++  return (
++    <>
++      <Seo
++        title="Vulnerability Management Services | SecureBit"
++        description="Risk-based vulnerability management from SecureBit — discovery, CVSS/EPSS/KEV-driven prioritization, remediation coordination, and executive and board reporting."
++        path="/services/vulnerability-management"
++      />
++      <PageHero
++        eyebrow="Vulnerability & Risk Management"
++        title="Risk-Based Vulnerability Management, End to End"
++        text="Build and operate a risk-based vulnerability management program — from discovery and prioritization through remediation, compliance, and executive reporting."
++      >
++        <Button variant="cyber" asChild>
++          <Link to="/contact">Book a Security Consultation</Link>
++        </Button>
++      </PageHero>
++
++      <section className="py-16 border-b border-border bg-card/30">
++        <div className="container mx-auto px-4">
++          <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
++            {lifecycle.map((step, i) => (
++              <div key={step} className="flex items-center gap-3 md:gap-4">
++                <span className="rounded-full border border-primary/40 bg-card px-4 py-2 text-sm font-medium text-foreground">
++                  {step}
++                </span>
++                {i < lifecycle.length - 1 && (
++                  <ArrowRight className="w-4 h-4 text-muted-foreground flex-shrink-0" aria-hidden="true" />
++                )}
++              </div>
++            ))}
++          </div>
++        </div>
++      </section>
++
++      <section className="py-24 border-b border-border">
++        <div className="container mx-auto px-4">
++          <div className="max-w-2xl mb-12">
++            <h2 className="font-display text-3xl font-bold mb-5">End-to-end program capabilities</h2>
++            <p className="text-muted-foreground text-lg">
++              SecureBit helps organizations drive remediation to meet security objectives while
++              minimizing disruption to business operations. Security remediation should reduce
++              risk without unnecessarily hindering the business.
++            </p>
++          </div>
++          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
++            {programCapabilities.map((item) => (
++              <article key={item.title} className="surface-card">
++                <Check className="w-5 h-5 text-primary mb-4" aria-hidden="true" />
++                <h3 className="font-display text-lg font-semibold mb-2">{item.title}</h3>
++                <p className="text-muted-foreground text-sm leading-relaxed">{item.text}</p>
++              </article>
++            ))}
++          </div>
++        </div>
++      </section>
++
++      <section className="py-24 border-b border-border bg-card/30">
++        <div className="container mx-auto px-4">
++          <div className="grid lg:grid-cols-2 gap-12">
++            <div>
++              <h2 className="font-display text-2xl md:text-3xl font-bold mb-5">
++                Risk-based prioritization
++              </h2>
++              <p className="text-muted-foreground mb-8">
++                Not every vulnerability deserves the same urgency. We combine multiple signals to
++                focus remediation on what actually matters to your business.
++              </p>
++              <ul className="grid grid-cols-2 gap-3">
++                {prioritizationFactors.map((factor) => (
++                  <li
++                    key={factor}
++                    className="flex items-center gap-2.5 text-sm rounded-lg border border-border bg-card px-4 py-3"
++                  >
++                    <Check className="w-4 h-4 text-primary flex-shrink-0" aria-hidden="true" />
++                    {factor}
++                  </li>
++                ))}
++              </ul>
++            </div>
++            <div>
++              <h2 className="font-display text-2xl md:text-3xl font-bold mb-5">
++                CISO & board reporting
++              </h2>
++              <p className="text-muted-foreground mb-8">
++                SecureBit translates technical vulnerabilities into business risk so security
++                leaders understand what requires attention, why it matters, and how remediation
++                should be prioritized.
++              </p>
++              <ul className="grid grid-cols-2 gap-3">
++                {reportingItems.map((item) => (
++                  <li
++                    key={item}
++                    className="flex items-center gap-2.5 text-sm rounded-lg border border-border bg-card px-4 py-3"
++                  >
++                    <Check className="w-4 h-4 text-primary flex-shrink-0" aria-hidden="true" />
++                    {item}
++                  </li>
++                ))}
++              </ul>
++            </div>
++          </div>
++        </div>
++      </section>
++
++      <section className="py-24 border-b border-border">
++        <div className="container mx-auto px-4">
++          <div className="max-w-3xl mb-12">
++            <p className="eyebrow mb-4">Enterprise Vulnerability Management</p>
++            <h2 className="font-display text-3xl font-bold mb-5">
++              Experience operating vulnerability management at enterprise scale
++            </h2>
++            <p className="text-muted-foreground text-lg">
++              SecureBit has experience maintaining and operating large-scale vulnerability
++              management programs covering{" "}
++              <strong className="text-foreground">
++                170,000+ assets across 15 VP-level business areas
++              </strong>
++              .
++            </p>
++          </div>
++          <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
++            {enterpriseCapabilities.map((item) => (
++              <li
++                key={item}
++                className="flex items-start gap-2.5 rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground"
++              >
++                <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" aria-hidden="true" />
++                {item}
++              </li>
++            ))}
++          </ul>
++          <p className="text-xs text-muted-foreground max-w-3xl">
++            This reflects hands-on professional experience running enterprise-scale vulnerability
++            management programs — not a current SecureBit client deployment or customer
++            environment unless explicitly stated.
++          </p>
++        </div>
++      </section>
++
++      <FinalCTA
++        heading="Vulnerability backlog getting away from you?"
++        text="We can assess your current program, help you prioritize by real business risk, and build a reporting cadence leadership will actually use."
++      />
++    </>
++  );
++};
++
++export default VulnerabilityManagement;
