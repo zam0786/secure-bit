@@ -6,6 +6,7 @@ import { services } from "@/data/services";
 const pageLinks = [
   { name: "Home", to: "/" },
   { name: "Services", to: "/services" },
+  { name: "Insights", to: "/blog" },
   { name: "About", to: "/about" },
   { name: "Why SecureBit", to: "/why-securebit" },
   { name: "Contact", to: "/contact" },

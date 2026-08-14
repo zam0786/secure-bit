@@ -6,13 +6,16 @@ import { Button } from "@/components/ui/button";
 import { AlertTriangle, Check } from "lucide-react";
 
 const capabilities = [
+  { title: "AI Application & Shadow AI Discovery", text: "Identify and assess unauthorized, high-risk, or unmanaged AI technologies across your organization." },
+  { title: "AI Vendor Risk Assessment", text: "Evaluate AI applications and vendors based on security, privacy, supply-chain, regulatory, and business risk." },
+  { title: "AI Data-Exposure Assessment", text: "Understand where organizational data flows into AI tools and models." },
   { title: "AI Security Assessments", text: "Review how AI is used across your organization and where it introduces risk." },
   { title: "Generative AI Security", text: "Secure assistants and copilots handling business and customer information." },
   { title: "LLM Security", text: "Address prompt injection, output handling, and model integration weaknesses." },
   { title: "RAG Security", text: "Protect retrieval pipelines and the knowledge sources they expose." },
   { title: "AI Agent Security", text: "Scope agent permissions, tools, and actions to the minimum required." },
   { title: "AI Governance", text: "Define approval, oversight, and accountability for AI use." },
-  { title: "AI Risk Management", text: "Bring AI risk into your existing risk management process." },
+  { title: "AI Supply-Chain & Data Residency", text: "Assess AI supply-chain, geopolitical, and data residency risk for regulated environments." },
   { title: "AI Data Protection", text: "Control what data reaches models, logs, and third parties." },
   { title: "Secure AI Adoption", text: "Practical guardrails so teams can build with AI safely." },
 ];
@@ -83,6 +86,23 @@ const AiSecurity = () => {
               </li>
             ))}
           </ul>
+        </div>
+      </section>
+
+      <section className="py-16 border-b border-border">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl">
+            <h2 className="font-display text-xl font-semibold mb-3">
+              For regulated and financial institutions
+            </h2>
+            <p className="text-muted-foreground leading-relaxed mb-4">
+              Discover → Identify → Assess → Prioritize → Control → Monitor. We also help
+              organizations evaluate and operationalize AI-driven security capabilities —
+              AI-assisted threat detection, investigation, threat hunting, and behavioral
+              analysis — without claiming specific vendor features, licensing, or certifications
+              unless verified.
+            </p>
+          </div>
         </div>
       </section>
 

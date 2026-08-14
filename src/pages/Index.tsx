@@ -6,6 +6,7 @@ import RiskToResilience from "@/components/home/RiskToResilience";
 import WhySecureBitSection from "@/components/home/WhySecureBitSection";
 import WhoWeHelp from "@/components/home/WhoWeHelp";
 import EngagementModels from "@/components/home/EngagementModels";
+import InsightsTeaser from "@/components/home/InsightsTeaser";
 import FinalCTA from "@/components/home/FinalCTA";
 
 const Index = () => {
@@ -23,6 +24,7 @@ const Index = () => {
       <WhySecureBitSection />
       <WhoWeHelp />
       <EngagementModels />
+      <InsightsTeaser />
       <FinalCTA />
     </>
   );
