@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Shield } from "lucide-react";
 import { Helmet } from "react-helmet-async";
-import { lovable } from "@/integrations/lovable/index";
 
 /** Only same-origin relative paths are accepted as a post-auth destination. */
 function safeNext(value: string | null): string {
@@ -16,14 +15,17 @@ function safeNext(value: string | null): string {
   return value;
 }
 
+// This portal is for SecureBit admin staff only. Accounts are provisioned out-of-band
+// by an existing administrator (see README / internal runbook) -- there is intentionally
+// no public self-signup form here, since anyone who could create an account here would
+// be able to load this page (even though they still could not read or modify contact
+// submissions, since that is enforced independently by Postgres RLS, not by this page).
 const Auth = () => {
   const [params] = useSearchParams();
   const next = safeNext(params.get("next"));
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -36,19 +38,6 @@ const Auth = () => {
     event.preventDefault();
     setBusy(true);
     setError(null);
-    setMessage(null);
-    if (mode === "signup") {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { emailRedirectTo: `${window.location.origin}${next}` },
-      });
-      setBusy(false);
-      if (error) return setError(error.message);
-      if (!data.session) return setMessage("Check your email to confirm your account, then sign in.");
-      window.location.replace(next);
-      return;
-    }
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
     if (error) return setError(error.message);
@@ -57,12 +46,14 @@ const Auth = () => {
 
   async function google() {
     setError(null);
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+      },
     });
-    if (result.error) return setError(result.error.message ?? "Google sign-in failed.");
-    if (result.redirected) return;
-    window.location.replace(next);
+    if (error) setError(error.message ?? "Google sign-in failed.");
+    // On success, Supabase navigates the browser to Google; nothing further to do here.
   }
 
   return (
@@ -71,14 +62,14 @@ const Auth = () => {
         <title>Sign In | SecureBit Security Team Portal</title>
         <meta
           name="description"
-          content="Sign in to the SecureBit security team portal to review inbound enquiries and connect approved AI clients to your account."
+          content="Sign in to the SecureBit security team portal to review inbound enquiries."
         />
         <meta name="robots" content="noindex, nofollow" />
         <link rel="canonical" href="https://securebit.ca/auth" />
         <meta property="og:title" content="Sign In | SecureBit Security Team Portal" />
         <meta
           property="og:description"
-          content="Security team access for reviewing inbound enquiries and connecting AI clients."
+          content="Security team access for reviewing inbound enquiries."
         />
         <meta property="og:url" content="https://securebit.ca/auth" />
       </Helmet>
@@ -86,10 +77,11 @@ const Auth = () => {
         <CardHeader className="space-y-2">
           <Shield className="w-8 h-8 text-primary" />
           <h1 className="font-display text-2xl font-semibold leading-none tracking-tight">
-            {mode === "signin" ? "Sign in to SecureBit" : "Create your SecureBit account"}
+            Sign in to SecureBit
           </h1>
           <CardDescription>
-            Security team access for reviewing inbound enquiries and connecting AI clients.
+            Security team access for reviewing inbound enquiries. Accounts are provisioned by an
+            administrator -- there is no public sign-up.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -111,7 +103,7 @@ const Auth = () => {
               <Input
                 id="password"
                 type="password"
-                autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                autoComplete="current-password"
                 required
                 minLength={8}
                 maxLength={72}
@@ -120,25 +112,13 @@ const Auth = () => {
               />
             </div>
             {error && <p className="text-sm text-destructive">{error}</p>}
-            {message && <p className="text-sm text-muted-foreground">{message}</p>}
             <Button type="submit" variant="cyber" className="w-full" disabled={busy}>
-              {busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
+              {busy ? "Please wait…" : "Sign in"}
             </Button>
           </form>
           <Button type="button" variant="outline" className="w-full" onClick={google} disabled={busy}>
             Continue with Google
           </Button>
-          <button
-            type="button"
-            className="w-full text-sm text-muted-foreground hover:text-primary transition-colors"
-            onClick={() => {
-              setMode(mode === "signin" ? "signup" : "signin");
-              setError(null);
-              setMessage(null);
-            }}
-          >
-            {mode === "signin" ? "Need an account? Sign up" : "Already have an account? Sign in"}
-          </button>
         </CardContent>
       </Card>
     </main>
