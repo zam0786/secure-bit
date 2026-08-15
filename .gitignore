@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment variables (contains only public VITE_ values by convention,
+# but should not be committed as a matter of hygiene)
+.env
+.env.local
