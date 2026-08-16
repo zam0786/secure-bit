@@ -17,6 +17,7 @@ interface Submission {
   message: string;
   created_at: string;
   notified_at: string | null;
+  notification_status: string;
   handled_at: string | null;
   handled_by: string | null;
 }
@@ -41,7 +42,7 @@ const Submissions = () => {
     const { data, error } = await supabase
       .from("contact_submissions")
       .select(
-        "id, name, email, company, phone, topic, message, created_at, notified_at, handled_at, handled_by"
+        "id, name, email, company, phone, topic, message, created_at, notified_at, notification_status, handled_at, handled_by"
       )
       .order("created_at", { ascending: false });
     setLoading(false);
@@ -186,6 +187,11 @@ const Submissions = () => {
                     {s.notified_at && (
                       <span className="inline-block text-xs font-medium text-muted-foreground border border-border rounded-full px-2.5 py-1">
                         Email notification sent
+                      </span>
+                    )}
+                    {s.notification_status === "failed" && (
+                      <span className="inline-block text-xs font-medium text-destructive border border-destructive/40 bg-destructive/5 rounded-full px-2.5 py-1">
+                        Email notification failed — check manually
                       </span>
                     )}
                   </div>
