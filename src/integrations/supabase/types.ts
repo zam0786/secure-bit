@@ -22,8 +22,12 @@ export type Database = {
           handled_at: string | null
           handled_by: string | null
           id: string
+          last_notification_error: string | null
           message: string
           name: string
+          notification_attempts: number
+          notification_claimed_at: string | null
+          notification_status: string
           notified_at: string | null
           phone: string | null
           topic: string | null
@@ -35,8 +39,12 @@ export type Database = {
           handled_at?: string | null
           handled_by?: string | null
           id?: string
+          last_notification_error?: string | null
           message: string
           name: string
+          notification_attempts?: number
+          notification_claimed_at?: string | null
+          notification_status?: string
           notified_at?: string | null
           phone?: string | null
           topic?: string | null
@@ -48,8 +56,12 @@ export type Database = {
           handled_at?: string | null
           handled_by?: string | null
           id?: string
+          last_notification_error?: string | null
           message?: string
           name?: string
+          notification_attempts?: number
+          notification_claimed_at?: string | null
+          notification_status?: string
           notified_at?: string | null
           phone?: string | null
           topic?: string | null

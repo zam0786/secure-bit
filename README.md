@@ -61,3 +61,62 @@ frontend.
 `supabase/functions/notify-submission` sends an email via Microsoft Graph whenever a
 new contact form row is inserted, triggered by a Supabase Database Webhook. See the
 comment block at the top of that file for required secrets and setup steps.
+
+**Notification reliability.** A row moves through `notification_status`:
+`pending` → `claimed` → `sent` (success, terminal) or `failed` (retryable, up to 5
+attempts, then terminal). The claim is atomic and lease-based (5 minute lease), so two
+concurrent webhook deliveries for the same row can never both send an email, but a
+transient Graph failure doesn't silently lose the notification either -- it just sits
+as `failed`/`claimed-but-stale` until the next sweep retries it.
+
+**Retry sweep.** The webhook only fires on INSERT, so something needs to periodically
+retry rows stuck in `claimed` (past their lease) or `failed` (with attempts remaining).
+Call the function in sweep mode on a schedule -- e.g. every 5 minutes -- via
+`POST https://<project-ref>.functions.supabase.co/notify-submission?mode=sweep` with the
+same `x-webhook-secret` header. Either:
+- Supabase's built-in Cron (Dashboard → Integrations → Cron) pointed at that URL, or
+- `pg_cron` + `pg_net` calling it from Postgres directly, or
+- Any external scheduler (e.g. a scheduled GitHub Actions workflow) hitting that URL.
+
+If a submission has failed 5 times, it stays `failed` permanently and shows a "notification
+failed" badge on `/submissions` so a human notices and can follow up manually.
+
+**Least-privilege mailbox scoping.** `Mail.Send` as an Application permission is
+tenant-wide by default -- the app could send as *any* mailbox in the org, not just the
+SecureBit contact mailbox. Restrict it with an Exchange Online **Application Access
+Policy** so it can only send as the one mailbox this function actually uses:
+
+```powershell
+# Run in Exchange Online PowerShell (Connect-ExchangeOnline first)
+New-DistributionGroup -Name "SecureBit Graph Senders" -Members contact@securebit.ca
+New-ApplicationAccessPolicy `
+  -AppId <MS_CLIENT_ID> `
+  -PolicyScopeGroupId "SecureBit Graph Senders" `
+  -AccessRight RestrictAccess `
+  -Description "Restrict notify-submission app to the SecureBit contact mailbox only"
+```
+
+Verify it worked with `Test-ApplicationAccessPolicy -AppId <MS_CLIENT_ID> -Identity contact@securebit.ca`
+(should report access granted) and again with a different mailbox in your tenant (should
+report denied).
+
+## Testing
+
+```sh
+npm test              # unit tests (webhook secret comparison, payload validation) -- run in CI
+```
+
+`supabase/tests/rls.test.ts` covers the actual Postgres RLS access matrix (anon
+insert-only, non-admin denied, admin allowed, no self-elevation via `user_roles`) but
+needs a real Postgres instance, so it's skipped automatically when the required env vars
+aren't set (including in CI). To run it locally:
+
+```sh
+supabase start
+supabase db reset
+SUPABASE_URL=http://127.0.0.1:54321 \
+SUPABASE_ANON_KEY=<local anon key from `supabase start` output> \
+SUPABASE_SERVICE_ROLE_KEY=<local service_role key from `supabase start` output> \
+npx vitest run supabase/tests/rls.test.ts
+```
+
