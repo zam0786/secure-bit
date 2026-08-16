@@ -42,14 +42,6 @@ const SECURITY_HEADERS: Record<string, string> = {
 
 export default {
   async fetch(request: Request, env: Env, _ctx: ExecutionContext): Promise<Response> {
-    const url = new URL(request.url);
-
-    // Preserve HTTP -> HTTPS redirect behavior.
-    if (url.protocol === "http:") {
-      url.protocol = "https:";
-      return Response.redirect(url.toString(), 301);
-    }
-
     // Serve the request from static assets (/, /robots.txt, /sitemap.xml,
     // /assets/*, and SPA routes via not_found_handling).
     const assetResponse = await env.ASSETS.fetch(request);
