@@ -27,3 +27,7 @@ dist-ssr
 # but should not be committed as a matter of hygiene)
 .env
 .env.local
+
+# Wrangler local dev artifacts
+.wrangler/
+worker-configuration.d.ts
