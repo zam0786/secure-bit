@@ -4,9 +4,11 @@ import Challenges from "@/components/home/Challenges";
 import ServicesOverview from "@/components/home/ServicesOverview";
 import RiskToResilience from "@/components/home/RiskToResilience";
 import WhySecureBitSection from "@/components/home/WhySecureBitSection";
+import CoreValues from "@/components/home/CoreValues";
 import WhoWeHelp from "@/components/home/WhoWeHelp";
 import EngagementModels from "@/components/home/EngagementModels";
 import InsightsTeaser from "@/components/home/InsightsTeaser";
+import AboutSummary from "@/components/home/AboutSummary";
 import FinalCTA from "@/components/home/FinalCTA";
 
 const Index = () => {
@@ -22,9 +24,11 @@ const Index = () => {
       <ServicesOverview />
       <RiskToResilience />
       <WhySecureBitSection />
+      <CoreValues />
       <WhoWeHelp />
       <EngagementModels />
       <InsightsTeaser />
+      <AboutSummary />
       <FinalCTA />
     </>
   );

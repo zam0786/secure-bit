@@ -2,12 +2,16 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Canonical is set dynamically per-route by src/components/Seo.tsx (react-helmet-async),
+         including on the homepage. A static canonical was tried here previously but caused a
+         confirmed duplicate <link rel="canonical"> once Helmet mounts -- Helmet appends its own
+         tag rather than replacing pre-existing static ones. Do not re-add a static one. -->
     <meta name="description" content="SecureBit helps businesses identify and reduce cyber risk through practical cybersecurity consulting, vulnerability management, cloud security, compliance, incident readiness and AI security.">
     <title>SecureBit | Cybersecurity Consulting &amp; Risk Management</title>
     <meta name="author" content="SecureBit" />
     <meta property="og:type" content="website" />
-	<link rel="canonical" href="https://securebit.ca/" />
     <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/2cdee108-d0dc-4d2c-9c9e-51b73b8da6a6">
 
     <meta name="twitter:card" content="summary_large_image" />
